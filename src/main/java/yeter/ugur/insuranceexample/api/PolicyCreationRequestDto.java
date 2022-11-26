@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-class PolicyCreationRequestDto {
+public class PolicyCreationRequestDto {
 
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate startDate;
