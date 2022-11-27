@@ -10,9 +10,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -24,11 +27,14 @@ import java.util.List;
         name = "policy",
         indexes =
         @Index(
-                name = "idx_on_policy_for_external_id_and_effective_date",
-                columnList = "externalId, effectiveDate"))
+                name = "idx_on_policy_for_external_id_and_start_date",
+                columnList = "externalId, startDate"))
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "insuredPersons")
 public class PolicyEntity implements Serializable {
 
     @Id
@@ -43,7 +49,7 @@ public class PolicyEntity implements Serializable {
     /**
      * The date the policy start effective.
      */
-    private LocalDate effectiveDate;
+    private LocalDate startDate;
 
     /**
      * Epoch milli second.
@@ -61,7 +67,6 @@ public class PolicyEntity implements Serializable {
     )
     @Builder.Default
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
-
 
     private void addPerson(InsuredPersonEntity insuredPerson) {
         insuredPersons.add(insuredPerson);
