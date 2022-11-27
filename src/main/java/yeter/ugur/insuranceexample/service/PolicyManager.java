@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationResponseDto;
+import yeter.ugur.insuranceexample.api.PolicyException;
 import yeter.ugur.insuranceexample.api.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
@@ -13,6 +14,8 @@ import yeter.ugur.insuranceexample.dao.PolicyRepository;
 
 import java.math.BigDecimal;
 import java.time.Clock;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -99,17 +102,17 @@ public class PolicyManager {
     public void modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
         String externalPolicyId = policyModificationRequestDto.getPolicyId();
         List<PolicyEntity> policies = policyRepository.findByExternalId(externalPolicyId);
-        List<PolicyEntity> effectedPolicies = policies.stream()
-                .filter(policy -> policy.getEffectiveDate().isEqual(policyModificationRequestDto.getEffectiveDate()) ||
-                        policy.getEffectiveDate().isAfter(policyModificationRequestDto.getEffectiveDate()))
-                .collect(Collectors.toList());
-        List<InsuredPersonDto> additionalPersons = policyModificationRequestDto.getInsuredPersons()
-                .stream().filter(person -> Objects.isNull(person.getId()))
-                .collect(Collectors.toList());
+        List<PolicyEntity> existingPoliciesBeforeModification = getPoliciesBeforeModification(policyModificationRequestDto, policies);
 
-        List<InsuredPersonDto> personsToMigrateToNewVersion = policyModificationRequestDto.getInsuredPersons()
-                .stream().filter(person -> Objects.nonNull(person.getId()))
-                .collect(Collectors.toList());
+        PolicyEntity latestPolicyBeforeModification = existingPoliciesBeforeModification.get(existingPoliciesBeforeModification.size() - 1);
 
+    }
+
+    private static List<PolicyEntity> getPoliciesBeforeModification(PolicyModificationRequestDto policyModificationRequestDto, List<PolicyEntity> policies) {
+        return policies.stream()
+                .filter(policyEntity -> policyEntity.getEffectiveDate().isBefore(policyModificationRequestDto.getEffectiveDate())
+                        || policyEntity.getEffectiveDate().isEqual(policyModificationRequestDto.getEffectiveDate()))
+                .sorted(Comparator.comparing(PolicyEntity::getEffectiveDate))
+                .collect(Collectors.toList());
     }
 }
