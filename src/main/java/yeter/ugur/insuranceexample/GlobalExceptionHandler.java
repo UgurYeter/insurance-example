@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import yeter.ugur.insuranceexample.api.PolicyCreationException;
+import yeter.ugur.insuranceexample.api.PolicyException;
 
 import java.time.Instant;
 
@@ -14,7 +14,7 @@ import java.time.Instant;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {PolicyCreationException.class})
+    @ExceptionHandler(value = {PolicyException.class})
     public ResponseEntity<ErrorResponse> handlePolicyCreationExceptions(Exception exception) {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .message(exception.getMessage())

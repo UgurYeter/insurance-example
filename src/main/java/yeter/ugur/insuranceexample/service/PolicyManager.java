@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationResponseDto;
+import yeter.ugur.insuranceexample.api.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
@@ -13,6 +14,7 @@ import yeter.ugur.insuranceexample.dao.PolicyRepository;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -83,14 +85,31 @@ public class PolicyManager {
 
     @VisibleForTesting
     String getUniqueExternalPolicyId() {
-        boolean existingId;
+        boolean uniqueId;
         String generatedId;
         do {
             String candidate = externalPolicyIdGenerator.generate();
-            existingId = policyRepository.findByExternalId(candidate).isPresent();
+            uniqueId = policyRepository.findByExternalId(candidate).isEmpty();
             generatedId = candidate;
             // TODO max attempt count could be limited.
-        } while (existingId);
+        } while (!uniqueId);
         return generatedId;
+    }
+
+    public void modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
+        String externalPolicyId = policyModificationRequestDto.getPolicyId();
+        List<PolicyEntity> policies = policyRepository.findByExternalId(externalPolicyId);
+        List<PolicyEntity> effectedPolicies = policies.stream()
+                .filter(policy -> policy.getEffectiveDate().isEqual(policyModificationRequestDto.getEffectiveDate()) ||
+                        policy.getEffectiveDate().isAfter(policyModificationRequestDto.getEffectiveDate()))
+                .collect(Collectors.toList());
+        List<InsuredPersonDto> additionalPersons = policyModificationRequestDto.getInsuredPersons()
+                .stream().filter(person -> Objects.isNull(person.getId()))
+                .collect(Collectors.toList());
+
+        List<InsuredPersonDto> personsToMigrateToNewVersion = policyModificationRequestDto.getInsuredPersons()
+                .stream().filter(person -> Objects.nonNull(person.getId()))
+                .collect(Collectors.toList());
+
     }
 }

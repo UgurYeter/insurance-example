@@ -20,13 +20,21 @@ public class PolicyController {
     this.policyManager = policyManager;
   }
 
-  @PostMapping
+  @PostMapping("/create")
   public PolicyCreationResponseDto createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
-    log.info("policyCreationRequestDto:{}", policyCreationRequestDto);
     LocalDate startDate = policyCreationRequestDto.getStartDate();
     if(!startDate.isAfter(LocalDate.now())){
-      throw new PolicyCreationException("Policy start date can only be in future!");
+      throw new PolicyException("Policy start date can only be in future!");
     }
     return policyManager.createPolicy(policyCreationRequestDto);
+  }
+
+  @PostMapping("/modify")
+  public void modifyPolicy(@RequestBody PolicyModificationRequestDto policyModificationRequestDto) {
+    LocalDate effectiveDate = policyModificationRequestDto.getEffectiveDate();
+    if(!effectiveDate.isAfter(LocalDate.now())){
+      throw new PolicyException("Policy effectiveDate date can only be in future!");
+    }
+    policyManager.modifyPolicy(policyModificationRequestDto);
   }
 }

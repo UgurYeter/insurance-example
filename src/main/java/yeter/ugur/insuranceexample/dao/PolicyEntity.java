@@ -2,12 +2,13 @@ package yeter.ugur.insuranceexample.dao;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -50,11 +51,13 @@ public class PolicyEntity implements Serializable {
     private long createdAt;
 
 
-    @OneToMany(
-            mappedBy = "policy",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "policy_person",
+            joinColumns = @JoinColumn(name = "policy_internal_id"),
+            inverseJoinColumns = @JoinColumn(name = "person_id")
     )
     @Builder.Default
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
@@ -62,7 +65,6 @@ public class PolicyEntity implements Serializable {
 
     private void addPerson(InsuredPersonEntity insuredPerson) {
         insuredPersons.add(insuredPerson);
-        insuredPerson.setPolicy(this);
     }
 
     public void addPersons(List<InsuredPersonEntity> insuredPersons) {

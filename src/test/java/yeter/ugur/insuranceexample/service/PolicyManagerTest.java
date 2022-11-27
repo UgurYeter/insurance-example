@@ -7,10 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,12 +31,13 @@ class PolicyManagerTest {
     @Test
     void itChecksIfPolicyIdUnique() {
         when(externalPolicyIdGenerator.generate()).thenReturn(EXTERNAL_POLICY_ID);
-        when(policyRepository.findByExternalId(EXTERNAL_POLICY_ID)).thenReturn(Optional.empty());
+        when(policyRepository.findByExternalId(EXTERNAL_POLICY_ID)).thenReturn(List.of());
 
         String uniqueExternalPolicyId = policyManager.getUniqueExternalPolicyId();
 
         verify(policyRepository).findByExternalId(EXTERNAL_POLICY_ID);
         assertThat(uniqueExternalPolicyId).isEqualTo(EXTERNAL_POLICY_ID);
+        verifyNoMoreInteractions(policyRepository);
     }
 
 

@@ -2,11 +2,10 @@ package yeter.ugur.insuranceexample.dao;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,6 +14,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @EqualsAndHashCode
@@ -37,6 +38,7 @@ public class InsuredPersonEntity implements Serializable {
     private BigDecimal premium;
 
     @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PolicyEntity policy;
+    @ManyToMany(mappedBy = "insuredPersons")
+    @Builder.Default
+    private List<PolicyEntity> policies = new ArrayList<>();
 }
