@@ -10,14 +10,14 @@ import java.util.List;
 
 @Data
 @Builder
-public class PolicyCreationResponse {
+public class PolicyCreationResponseDto {
 
     private String policyId;
 
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate startDate;
 
-    private List<InsuredPerson> insuredPersons;
+    private List<InsuredPersonDto> insuredPersons;
 
     private BigDecimal totalPremium;
 }
