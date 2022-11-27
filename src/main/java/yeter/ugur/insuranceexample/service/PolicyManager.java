@@ -107,8 +107,9 @@ public class PolicyManager {
     }
 
     public PolicyModificationResponseDto modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
-        PolicyEntity latestPolicyState = findLatestPolicyState(policyModificationRequestDto.getPolicyId(), NOW).orElseThrow(
-                () -> new PolicyModificationException("Can't find policy to modify!"));
+        PolicyEntity latestPolicyState = findLatestPolicyState(policyModificationRequestDto.getPolicyId(),
+                policyModificationRequestDto.getEffectiveDate())
+                .orElseThrow(() -> new PolicyModificationException("Can't find policy to modify!"));
         List<InsuredPersonEntity> personsForNewPolicy = insuredPersonRepository.findAllById(
                 getPersonIdsInModificationRequest(policyModificationRequestDto));
         List<InsuredPersonDto> newInsurancePersonsToCreate = getPersonsToAddFromModificationRequest(policyModificationRequestDto);
