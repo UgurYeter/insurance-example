@@ -56,6 +56,7 @@ public class PolicyEntity implements Serializable {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
+    @Builder.Default
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
 
 

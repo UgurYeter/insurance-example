@@ -1,7 +1,7 @@
 package yeter.ugur.insuranceexample;
 
 import yeter.ugur.insuranceexample.api.InsuredPerson;
-import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
+import yeter.ugur.insuranceexample.api.PolicyCreationRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,8 +13,8 @@ public final class PolicyCreationRequestDtoTestHelper {
 
     }
 
-    public static PolicyCreationRequestDto.PolicyCreationRequestDtoBuilder prototype() {
-        return PolicyCreationRequestDto.builder().startDate(LocalDate.MIN)
+    public static PolicyCreationRequest.PolicyCreationRequestDtoBuilder prototype() {
+        return PolicyCreationRequest.builder().startDate(LocalDate.MIN)
                 .insuredPersons(List.of(InsuredPerson.builder()
                                 .firstName("First-name-1")
                                 .secondName("Second-name-1")

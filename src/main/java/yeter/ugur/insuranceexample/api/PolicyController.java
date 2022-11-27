@@ -19,8 +19,8 @@ public class PolicyController {
   }
 
   @PostMapping
-  public void createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
-    log.info("policyCreationRequestDto:{}", policyCreationRequestDto);
-    policyManager.createPolicy(policyCreationRequestDto);
+  public PolicyCreationResponse createPolicy(@RequestBody PolicyCreationRequest policyCreationRequest) {
+    log.info("policyCreationRequestDto:{}", policyCreationRequest);
+    return policyManager.createPolicy(policyCreationRequest);
   }
 }
