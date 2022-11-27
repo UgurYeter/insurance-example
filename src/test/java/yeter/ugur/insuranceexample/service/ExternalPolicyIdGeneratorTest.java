@@ -7,19 +7,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static yeter.ugur.insuranceexample.service.ExternalPolicyIdCreator.EXTERNAL_POLICY_ID_LENGTH;
+import static yeter.ugur.insuranceexample.service.ExternalPolicyIdGenerator.EXTERNAL_POLICY_ID_LENGTH;
 
 @ExtendWith(MockitoExtension.class)
-class ExternalPolicyIdCreatorTest {
+class ExternalPolicyIdGeneratorTest {
 
     private static final Pattern EXTERNAL_POLICY_ID_PATTERN = Pattern.compile("^[A-Z0-9]"
             + "{" + EXTERNAL_POLICY_ID_LENGTH + "}"
             + "$");
-    private ExternalPolicyIdCreator externalPolicyIdCreator = new ExternalPolicyIdCreator();
+    private ExternalPolicyIdGenerator externalPolicyIdGenerator = new ExternalPolicyIdGenerator();
 
     @Test
-    void itGeneratesAlphanumericStringWithExpectedLength() {
-        String externalPolicyId = externalPolicyIdCreator.generateExternalPolicyId();
+    void itGeneratesValidExternalPolicyId() {
+        String externalPolicyId = externalPolicyIdGenerator.generate();
 
         assertThat(externalPolicyId).matches(EXTERNAL_POLICY_ID_PATTERN);
     }
