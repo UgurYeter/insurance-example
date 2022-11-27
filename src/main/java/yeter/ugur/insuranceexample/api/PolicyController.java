@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import yeter.ugur.insuranceexample.service.PolicyManager;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/policies")
 @Slf4j
@@ -21,6 +23,10 @@ public class PolicyController {
   @PostMapping
   public PolicyCreationResponseDto createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
     log.info("policyCreationRequestDto:{}", policyCreationRequestDto);
+    LocalDate startDate = policyCreationRequestDto.getStartDate();
+    if(!startDate.isAfter(LocalDate.now())){
+      throw new PolicyCreationException("Policy start date can only be in future!");
+    }
     return policyManager.createPolicy(policyCreationRequestDto);
   }
 }

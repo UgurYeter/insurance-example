@@ -37,17 +37,20 @@ public class PolicyManager {
         List<InsuredPersonEntity> insuredPersons = mapToPersonEntities(creationRequestDto);
         PolicyEntity storedPolicy = policyInsuredPersonStorageHelper
                 .createPolicyWithInsuredPersons(mapToPolicyEntity(creationRequestDto, externalPolicyId), insuredPersons);
-
         return PolicyCreationResponseDto.builder()
                 .policyId(storedPolicy.getExternalId())
                 .startDate(storedPolicy.getEffectiveDate())
                 .insuredPersons(storedPolicy.getInsuredPersons().stream()
                         .map(mapToInsuredPersonDto()).collect(Collectors.toList()))
-                .totalPremium(storedPolicy.getInsuredPersons()
-                        .stream()
-                        .map(InsuredPersonEntity::getPremium)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add))
+                .totalPremium(calculateTotalPremium(storedPolicy))
                 .build();
+    }
+
+    private static BigDecimal calculateTotalPremium(PolicyEntity storedPolicy) {
+        return storedPolicy.getInsuredPersons()
+                .stream()
+                .map(InsuredPersonEntity::getPremium)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private static Function<InsuredPersonEntity, InsuredPersonDto> mapToInsuredPersonDto() {
