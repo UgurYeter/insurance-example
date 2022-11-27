@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class InsuredPersonCreationDto {
+public class InsuredPersonDto {
+
+    private Integer id;
 
     private String firstName;
 

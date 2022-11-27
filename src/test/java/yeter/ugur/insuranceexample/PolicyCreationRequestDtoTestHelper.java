@@ -1,6 +1,6 @@
 package yeter.ugur.insuranceexample;
 
-import yeter.ugur.insuranceexample.api.InsuredPersonCreationDto;
+import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
 
 import java.math.BigDecimal;
@@ -16,12 +16,12 @@ public final class PolicyCreationRequestDtoTestHelper {
     public static PolicyCreationRequestDto prototype() {
         PolicyCreationRequestDto policyCreationRequestDto = new PolicyCreationRequestDto();
         policyCreationRequestDto.setStartDate(LocalDate.MIN);
-        policyCreationRequestDto.setInsuredPersons(List.of(InsuredPersonCreationDto.builder()
+        policyCreationRequestDto.setInsuredPersons(List.of(InsuredPersonDto.builder()
                         .firstName("First-name-1")
                         .secondName("Second-name-1")
                         .premium(BigDecimal.ONE)
                         .build(),
-                InsuredPersonCreationDto.builder()
+                InsuredPersonDto.builder()
                         .firstName("First-name-2")
                         .secondName("Second-name-2")
                         .premium(BigDecimal.valueOf(2l))

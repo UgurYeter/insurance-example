@@ -12,6 +12,6 @@ public class PolicyCreationRequestDto {
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate startDate;
 
-    private List<InsuredPersonCreationDto> insuredPersons;
+    private List<InsuredPersonDto> insuredPersons;
 
 }
