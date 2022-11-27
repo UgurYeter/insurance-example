@@ -7,10 +7,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
-public class PolicyCreationRequestDto {
+public class PolicyModificationRequestDto {
+    private String policyId;
 
     @JsonFormat(pattern = "dd.MM.yyyy")
-    private LocalDate startDate;
+    private LocalDate effectiveDate;
 
     private List<InsuredPersonCreationDto> insuredPersons;
 

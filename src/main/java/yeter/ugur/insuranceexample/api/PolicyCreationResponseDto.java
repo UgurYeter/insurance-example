@@ -17,7 +17,7 @@ public class PolicyCreationResponseDto {
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate startDate;
 
-    private List<InsuredPersonDto> insuredPersons;
+    private List<ExistingInsuredPersonDto> insuredPersons;
 
     private BigDecimal totalPremium;
 }

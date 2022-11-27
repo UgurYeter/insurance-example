@@ -3,7 +3,8 @@ package yeter.ugur.insuranceexample.service;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
-import yeter.ugur.insuranceexample.api.InsuredPersonDto;
+import yeter.ugur.insuranceexample.api.ExistingInsuredPersonDto;
+import yeter.ugur.insuranceexample.api.InsuredPersonCreationDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
@@ -53,8 +54,8 @@ public class PolicyManager {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private static Function<InsuredPersonEntity, InsuredPersonDto> mapToInsuredPersonDto() {
-        return storedPerson -> InsuredPersonDto.builder()
+    private static Function<InsuredPersonEntity, ExistingInsuredPersonDto> mapToInsuredPersonDto() {
+        return storedPerson -> ExistingInsuredPersonDto.builder()
                 .id(storedPerson.getId())
                 .firstName(storedPerson.getFirstName())
                 .secondName(storedPerson.getSecondName())
