@@ -13,7 +13,7 @@ public class PolicyResponse {
 
     private String policyId;
 
-    private LocalDate startDate;
+    private LocalDate effectiveDate;
 
     private List<InsuredPerson> insuredPersons;
 

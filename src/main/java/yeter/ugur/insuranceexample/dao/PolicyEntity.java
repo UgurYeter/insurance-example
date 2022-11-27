@@ -2,6 +2,7 @@ package yeter.ugur.insuranceexample.dao;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,19 +53,18 @@ public class PolicyEntity implements Serializable {
     @OneToMany(
             mappedBy = "policy",
             cascade = CascadeType.ALL,
-            orphanRemoval = true
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
     )
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
 
 
-    public void addPerson(InsuredPersonEntity insuredPerson) {
+    private void addPerson(InsuredPersonEntity insuredPerson) {
         insuredPersons.add(insuredPerson);
         insuredPerson.setPolicy(this);
     }
 
-    public void removePerson(InsuredPersonEntity insuredPerson) {
-        insuredPersons.remove(insuredPerson);
-        insuredPerson.setPolicy(null);
+    public void addPersons(List<InsuredPersonEntity> insuredPersons) {
+        insuredPersons.forEach(this::addPerson);
     }
-
 }
