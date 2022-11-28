@@ -15,7 +15,7 @@ import java.time.Clock;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.mapToPersonEntities;
+import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.toInsuredPersonEntities;
 
 @Slf4j
 @Service
@@ -41,7 +41,7 @@ public class PolicyCreationService {
     @Transactional
     public PolicyCreationResponseDto createPolicy(PolicyCreationRequestDto creationRequestDto) {
         String externalPolicyId = generateUniquePolicyId();
-        List<InsuredPersonEntity> insuredPersons = mapToPersonEntities(creationRequestDto.getInsuredPersons());
+        List<InsuredPersonEntity> insuredPersons = toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
         PolicyEntity storedPolicy = createPolicyWithInsuredPersons(mapToPolicyEntity(creationRequestDto, externalPolicyId), insuredPersons);
         return PolicyCreationResponseDto.builder()
                 .policyId(storedPolicy.getExternalId())

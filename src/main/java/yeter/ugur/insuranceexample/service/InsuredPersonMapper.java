@@ -5,7 +5,6 @@ import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class InsuredPersonMapper {
@@ -14,23 +13,20 @@ public final class InsuredPersonMapper {
 
     }
 
-    public static List<InsuredPersonEntity> mapToPersonEntities(List<InsuredPersonDto> insuredPersons) {
+    public static List<InsuredPersonEntity> toInsuredPersonEntities(List<InsuredPersonDto> insuredPersons) {
         return insuredPersons
                 .stream()
-                .map(person -> InsuredPersonEntity.builder()
-                        .firstName(person.getFirstName())
-                        .secondName(person.getSecondName())
-                        .premium(person.getPremium())
-                        .build())
+                .map(InsuredPersonMapper::toInsuredPersonEntity)
                 .collect(Collectors.toList());
     }
 
-    public static List<Integer> collectPersonIds(List<InsuredPersonDto> insuredPersons) {
-        return insuredPersons
-                .stream()
-                .map(InsuredPersonDto::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+    static InsuredPersonEntity toInsuredPersonEntity(InsuredPersonDto person) {
+        return InsuredPersonEntity.builder()
+                .id(person.getId())
+                .firstName(person.getFirstName())
+                .secondName(person.getSecondName())
+                .premium(person.getPremium())
+                .build();
     }
 
     public static List<InsuredPersonDto> toInsuredPersonsDto(PolicyEntity newPolicyState) {

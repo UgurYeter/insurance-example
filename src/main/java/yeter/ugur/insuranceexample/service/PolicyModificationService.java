@@ -1,7 +1,7 @@
 package yeter.ugur.insuranceexample.service;
 
+import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
-import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
@@ -16,8 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.collectPersonIds;
-import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.mapToPersonEntities;
+import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.toInsuredPersonEntities;
 
 @Service
 public class PolicyModificationService {
@@ -42,7 +41,8 @@ public class PolicyModificationService {
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
 
-        List<InsuredPersonEntity> personsOfModifiedPolicy = getPersonsOfModifiedPolicy(policyModificationRequestDto);
+        List<InsuredPersonEntity> personsOfModifiedPolicy = getPersonsOfModifiedPolicy(
+                toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons()));
         PolicyEntity newPolicyState = PolicyEntity.builder()
                 .externalId(basePolicy.getExternalId())
                 .createdAt(clock.instant().toEpochMilli())
@@ -58,20 +58,29 @@ public class PolicyModificationService {
                 .build();
     }
 
-    private List<InsuredPersonEntity> getPersonsOfModifiedPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
+    private List<InsuredPersonEntity> getPersonsOfModifiedPolicy(List<InsuredPersonEntity> insuredPersonEntities) {
         List<InsuredPersonEntity> existingPersons = insuredPersonRepository
-                .findAllById(collectPersonIds(policyModificationRequestDto.getInsuredPersons()));
+                .findAllById(collectPersonIds(insuredPersonEntities));
         List<InsuredPersonEntity> personsOfModifiedPolicy = new ArrayList<>(existingPersons);
-        List<InsuredPersonDto> newInsurancePersonsToCreate = collectPersonsWithNullId(policyModificationRequestDto.getInsuredPersons());
+        List<InsuredPersonEntity> newInsurancePersonsToCreate = collectPersonsWithNullId(insuredPersonEntities);
         if (!newInsurancePersonsToCreate.isEmpty()) {
-            List<InsuredPersonEntity> insuredPersonEntities = mapToPersonEntities(newInsurancePersonsToCreate);
-            List<InsuredPersonEntity> newlyCreatedPersons = insuredPersonRepository.saveAll(insuredPersonEntities);
+            List<InsuredPersonEntity> newlyCreatedPersons = insuredPersonRepository.saveAll(newInsurancePersonsToCreate);
             personsOfModifiedPolicy.addAll(newlyCreatedPersons);
         }
         return personsOfModifiedPolicy;
     }
 
-    private List<InsuredPersonDto> collectPersonsWithNullId(List<InsuredPersonDto> insuredPersons) {
+    @VisibleForTesting
+    List<Integer> collectPersonIds(List<InsuredPersonEntity> insuredPersons) {
+        return insuredPersons
+                .stream()
+                .map(InsuredPersonEntity::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @VisibleForTesting
+    List<InsuredPersonEntity> collectPersonsWithNullId(List<InsuredPersonEntity> insuredPersons) {
         return insuredPersons
                 .stream()
                 .filter(person -> Objects.isNull(person.getId()))

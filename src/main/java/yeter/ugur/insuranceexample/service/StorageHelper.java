@@ -1,9 +1,6 @@
 package yeter.ugur.insuranceexample.service;
 
-import jakarta.transaction.Transactional;
-import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Component;
-import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
@@ -13,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class StorageHelper {
@@ -26,7 +22,6 @@ public class StorageHelper {
         this.insuredPersonRepository = insuredPersonRepository;
     }
 
-    @VisibleForTesting
     public Optional<PolicyEntity> findLatestStoredPolicyPriorToDate(String policyId, LocalDate startDate) {
         List<PolicyEntity> foundPolicies = policyRepository.findByExternalId(policyId);
         if (foundPolicies.isEmpty()) {

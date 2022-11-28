@@ -33,7 +33,7 @@ public class InsuredPersonEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Nonnull
     private String firstName;
