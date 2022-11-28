@@ -3,7 +3,6 @@ package yeter.ugur.insuranceexample.api.creation;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 
 import java.time.LocalDate;
@@ -14,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PolicyCreationRequestDto {
 
-    @NonNull
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate startDate;
 

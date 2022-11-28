@@ -15,7 +15,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PolicyManagerTest {
+class PolicyCreationServiceTest {
 
     private static final String EXTERNAL_POLICY_ID = "CU423DF89";
 
@@ -26,14 +26,14 @@ class PolicyManagerTest {
     private PolicyRepository policyRepository;
 
     @InjectMocks
-    private PolicyManager policyManager;
+    private PolicyCreationService policyCreationService;
 
     @Test
     void itChecksIfPolicyIdUnique() {
         when(externalPolicyIdGenerator.generate()).thenReturn(EXTERNAL_POLICY_ID);
         when(policyRepository.findByExternalId(EXTERNAL_POLICY_ID)).thenReturn(List.of());
 
-        String uniqueExternalPolicyId = policyManager.getUniqueExternalPolicyId();
+        String uniqueExternalPolicyId = policyCreationService.generateUniquePolicyId();
 
         verify(policyRepository).findByExternalId(EXTERNAL_POLICY_ID);
         assertThat(uniqueExternalPolicyId).isEqualTo(EXTERNAL_POLICY_ID);

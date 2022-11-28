@@ -63,6 +63,9 @@ public class PolicyEntity implements Serializable {
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
 
     public void addPersons(List<InsuredPersonEntity> insuredPersons) {
-        insuredPersons.addAll(insuredPersons);
+        insuredPersons.forEach(insuredPerson -> {
+                    this.insuredPersons.add(insuredPerson);
+                    insuredPerson.addPolicy(this);
+                });
     }
 }

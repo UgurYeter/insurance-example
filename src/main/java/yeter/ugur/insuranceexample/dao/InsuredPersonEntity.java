@@ -48,4 +48,8 @@ public class InsuredPersonEntity implements Serializable {
     @ManyToMany(mappedBy = "insuredPersons")
     @Builder.Default
     private List<PolicyEntity> policies = new ArrayList<>();
+
+    public void addPolicy(PolicyEntity policyEntity){
+        this.policies.add(policyEntity);
+    }
 }

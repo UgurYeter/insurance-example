@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {PolicyDateException.class})
-    public ResponseEntity<ErrorResponse> handlePolicyCreationExceptions(Exception exception) {
+    public ResponseEntity<ErrorResponse> handlePolicyDateException(Exception exception) {
         return buildErrorResponse(exception, BAD_REQUEST);
     }
 
