@@ -22,22 +22,22 @@ import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.toInsuredP
 public class PolicyModificationService {
     private final InsuredPersonRepository insuredPersonRepository;
     private final PolicyRepository policyRepository;
-    private final StorageHelper storageHelper;
+    private final PolicyStateHelper policyStateHelper;
     private final Clock clock;
 
     public PolicyModificationService(InsuredPersonRepository insuredPersonRepository,
                                      PolicyRepository policyRepository,
-                                     StorageHelper storageHelper,
+                                     PolicyStateHelper policyStateHelper,
                                      Clock clock) {
         this.insuredPersonRepository = insuredPersonRepository;
         this.policyRepository = policyRepository;
-        this.storageHelper = storageHelper;
+        this.policyStateHelper = policyStateHelper;
         this.clock = clock;
     }
 
     public PolicyModificationResponseDto modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
         PolicyEntity basePolicy =
-                storageHelper.findLatestStoredPolicyPriorToDate(policyModificationRequestDto.getPolicyId(),
+                policyStateHelper.findLatestPolicyStatePriorToDate(policyModificationRequestDto.getPolicyId(),
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
 

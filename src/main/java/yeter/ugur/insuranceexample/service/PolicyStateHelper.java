@@ -1,7 +1,6 @@
 package yeter.ugur.insuranceexample.service;
 
 import org.springframework.stereotype.Component;
-import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
 
@@ -12,17 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class StorageHelper {
+public class PolicyStateHelper {
 
     private final PolicyRepository policyRepository;
-    private final InsuredPersonRepository insuredPersonRepository;
 
-    public StorageHelper(PolicyRepository policyRepository, InsuredPersonRepository insuredPersonRepository) {
+    public PolicyStateHelper(PolicyRepository policyRepository) {
         this.policyRepository = policyRepository;
-        this.insuredPersonRepository = insuredPersonRepository;
     }
 
-    public Optional<PolicyEntity> findLatestStoredPolicyPriorToDate(String policyId, LocalDate startDate) {
+    public Optional<PolicyEntity> findLatestPolicyStatePriorToDate(String policyId, LocalDate startDate) {
         List<PolicyEntity> foundPolicies = policyRepository.findByExternalId(policyId);
         if (foundPolicies.isEmpty()) {
             return Optional.empty();

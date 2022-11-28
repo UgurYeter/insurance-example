@@ -24,17 +24,17 @@ public class PolicyCreationService {
     private final ExternalPolicyIdGenerator externalPolicyIdGenerator;
     private final PolicyRepository policyRepository;
     private final InsuredPersonRepository insuredPersonRepository;
-    private final StorageHelper storageHelper;
+    private final PolicyStateHelper policyStateHelper;
     private final Clock clock;
 
     public PolicyCreationService(ExternalPolicyIdGenerator externalPolicyIdGenerator,
                                  PolicyRepository policyRepository,
-                                 InsuredPersonRepository insuredPersonRepository, StorageHelper storageHelper,
+                                 InsuredPersonRepository insuredPersonRepository, PolicyStateHelper policyStateHelper,
                                  Clock clock) {
         this.externalPolicyIdGenerator = externalPolicyIdGenerator;
         this.policyRepository = policyRepository;
         this.insuredPersonRepository = insuredPersonRepository;
-        this.storageHelper = storageHelper;
+        this.policyStateHelper = policyStateHelper;
         this.clock = clock;
     }
 

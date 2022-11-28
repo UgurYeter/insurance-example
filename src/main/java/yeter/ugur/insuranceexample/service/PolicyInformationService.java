@@ -11,15 +11,15 @@ import static yeter.ugur.insuranceexample.service.PolicyPremiumHelper.calculateT
 
 @Service
 public class PolicyInformationService {
-    private final StorageHelper storageHelper;
+    private final PolicyStateHelper policyStateHelper;
 
-    public PolicyInformationService(StorageHelper storageHelper) {
-        this.storageHelper = storageHelper;
+    public PolicyInformationService(PolicyStateHelper policyStateHelper) {
+        this.policyStateHelper = policyStateHelper;
     }
 
     public PolicyInformationResponseDto getPolicyInformation(String policyId, LocalDate requestLocalDate) {
-        PolicyEntity foundPolicy = storageHelper.findLatestStoredPolicyPriorToDate(policyId, requestLocalDate)
-                .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
+        PolicyEntity foundPolicy = policyStateHelper.findLatestPolicyStatePriorToDate(policyId, requestLocalDate)
+                .orElseThrow(() -> new PolicyIsNotFoundException("Can't find the policy!"));
 
         return PolicyInformationResponseDto.builder()
                 .policyId(foundPolicy.getExternalId())
