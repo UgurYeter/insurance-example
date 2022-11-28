@@ -24,7 +24,7 @@ public class PolicyInformationService {
         return PolicyInformationResponseDto.builder()
                 .policyId(foundPolicy.getExternalId())
                 .requestDate(requestLocalDate)
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(foundPolicy))
+                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(foundPolicy.getInsuredPersons()))
                 .totalPremium(calculateTotalPremium(foundPolicy.getInsuredPersons()))
                 .build();
     }

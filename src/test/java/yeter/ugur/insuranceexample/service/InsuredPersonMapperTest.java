@@ -23,14 +23,14 @@ class InsuredPersonMapperTest {
 
     @Test
     void itMapsToInsuredPersonEntity() {
-        InsuredPersonDto insuredPersonDto = InsuredPersonDto.builder()
+        List<InsuredPersonDto> insuredPersonDtos = List.of(InsuredPersonDto.builder()
                 .id(PERSON_ID_1)
                 .firstName(FIRST_NAME_1)
                 .secondName(SECOND_NAME_1)
                 .premium(PREMIUM_1)
-                .build();
+                .build());
 
-        InsuredPersonEntity insuredPersonEntity = InsuredPersonMapper.toInsuredPersonEntity(insuredPersonDto);
+        InsuredPersonEntity insuredPersonEntity = InsuredPersonMapper.toInsuredPersonEntities(insuredPersonDtos).get(0);
 
         assertThat(insuredPersonEntity.getId()).isEqualTo(PERSON_ID_1);
         assertThat(insuredPersonEntity.getFirstName()).isEqualTo(FIRST_NAME_1);
@@ -65,6 +65,40 @@ class InsuredPersonMapperTest {
         assertThat(insuredPersonEntityOne.getPremium()).isEqualTo(PREMIUM_1);
 
         InsuredPersonEntity insuredPersonEntityTwo = insuredPersonEntities.get(1);
+        assertThat(insuredPersonEntityTwo.getId()).isEqualTo(PERSON_ID_2);
+        assertThat(insuredPersonEntityTwo.getFirstName()).isEqualTo(FIRST_NAME_2);
+        assertThat(insuredPersonEntityTwo.getSecondName()).isEqualTo(SECOND_NAME_2);
+        assertThat(insuredPersonEntityTwo.getPremium()).isEqualTo(PREMIUM_2);
+    }
+
+    @Test
+    void itMapsToInsuredPersonsDto() {
+        List<InsuredPersonEntity> insuredPersons = List.of(
+                InsuredPersonEntity.builder()
+                        .id(PERSON_ID_1)
+                        .firstName(FIRST_NAME_1)
+                        .secondName(SECOND_NAME_1)
+                        .premium(PREMIUM_1)
+                        .build(),
+                InsuredPersonEntity.builder()
+                        .id(PERSON_ID_2)
+                        .firstName(FIRST_NAME_2)
+                        .secondName(SECOND_NAME_2)
+                        .premium(PREMIUM_2)
+                        .build()
+
+        );
+
+        List<InsuredPersonDto> insuredPersonDtos = InsuredPersonMapper.toInsuredPersonsDto(insuredPersons);
+
+        insuredPersonDtos.sort(Comparator.comparingInt(InsuredPersonDto::getId));
+        InsuredPersonEntity insuredPersonEntityOne = insuredPersons.get(0);
+        assertThat(insuredPersonEntityOne.getId()).isEqualTo(PERSON_ID_1);
+        assertThat(insuredPersonEntityOne.getFirstName()).isEqualTo(FIRST_NAME_1);
+        assertThat(insuredPersonEntityOne.getSecondName()).isEqualTo(SECOND_NAME_1);
+        assertThat(insuredPersonEntityOne.getPremium()).isEqualTo(PREMIUM_1);
+        InsuredPersonEntity insuredPersonEntityTwo = insuredPersons.get(1);
+
         assertThat(insuredPersonEntityTwo.getId()).isEqualTo(PERSON_ID_2);
         assertThat(insuredPersonEntityTwo.getFirstName()).isEqualTo(FIRST_NAME_2);
         assertThat(insuredPersonEntityTwo.getSecondName()).isEqualTo(SECOND_NAME_2);

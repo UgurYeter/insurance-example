@@ -10,3 +10,6 @@ The project benefits from the following:
 http://localhost:8080/h2-console
 + username: user
 + password: password
+
+### DB Migration and Test Data
+The application uses [Flyway](https://flywaydb.org/) for database migration and prepares initial test data. 

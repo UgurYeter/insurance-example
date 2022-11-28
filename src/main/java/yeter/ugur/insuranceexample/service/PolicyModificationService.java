@@ -53,7 +53,7 @@ public class PolicyModificationService {
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(newPolicyState))
+                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(newPolicyState.getInsuredPersons()))
                 .totalPremium(PolicyPremiumHelper.calculateTotalPremium(newPolicyState.getInsuredPersons()))
                 .build();
     }

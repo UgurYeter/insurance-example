@@ -46,7 +46,7 @@ public class PolicyCreationService {
         return PolicyCreationResponseDto.builder()
                 .policyId(storedPolicy.getExternalId())
                 .startDate(storedPolicy.getStartDate())
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(storedPolicy))
+                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(storedPolicy.getInsuredPersons()))
                 .totalPremium(PolicyPremiumHelper.calculateTotalPremium(storedPolicy.getInsuredPersons()))
                 .build();
     }
