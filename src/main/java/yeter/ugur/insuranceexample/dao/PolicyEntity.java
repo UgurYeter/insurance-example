@@ -23,12 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(
-        name = "policy",
-        indexes =
-        @Index(
-                name = "idx_on_policy_for_external_id_and_start_date",
-                columnList = "externalId, startDate"))
+@Table(name = "policy")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
