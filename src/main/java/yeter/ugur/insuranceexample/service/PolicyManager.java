@@ -6,7 +6,8 @@ import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.PolicyCreationResponseDto;
-import yeter.ugur.insuranceexample.api.PolicyModificationException;
+import yeter.ugur.insuranceexample.api.PolicyInformationResponseDto;
+import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.PolicyModificationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
@@ -36,7 +37,11 @@ public class PolicyManager {
     private final PolicyInsuredPersonStorageHelper policyInsuredPersonStorageHelper;
     private final Clock clock;
 
-    public PolicyManager(ExternalPolicyIdGenerator externalPolicyIdGenerator, PolicyRepository policyRepository, InsuredPersonRepository insuredPersonRepository, PolicyInsuredPersonStorageHelper policyInsuredPersonStorageHelper, Clock clock) {
+    public PolicyManager(ExternalPolicyIdGenerator externalPolicyIdGenerator,
+                         PolicyRepository policyRepository,
+                         InsuredPersonRepository insuredPersonRepository,
+                         PolicyInsuredPersonStorageHelper policyInsuredPersonStorageHelper,
+                         Clock clock) {
         this.externalPolicyIdGenerator = externalPolicyIdGenerator;
         this.policyRepository = policyRepository;
         this.insuredPersonRepository = insuredPersonRepository;
@@ -109,7 +114,7 @@ public class PolicyManager {
     public PolicyModificationResponseDto modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
         PolicyEntity latestPolicyState = findLatestPolicyState(policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate())
-                .orElseThrow(() -> new PolicyModificationException("Can't find policy to modify!"));
+                .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
         List<InsuredPersonEntity> personsForNewPolicy = insuredPersonRepository.findAllById(
                 getPersonIdsInModificationRequest(policyModificationRequestDto));
         List<InsuredPersonDto> newInsurancePersonsToCreate = getPersonsToAddFromModificationRequest(policyModificationRequestDto);
@@ -166,5 +171,18 @@ public class PolicyManager {
         }
         filteredPolicies.sort(Comparator.comparing(PolicyEntity::getStartDate));
         return Optional.of(filteredPolicies.get(foundPolicies.size() - 1));
+    }
+
+    public PolicyInformationResponseDto getPolicy(String policyId, LocalDate requestLocalDate) {
+        PolicyEntity foundPolicy = findLatestPolicyState(policyId, requestLocalDate)
+                .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
+
+        return PolicyInformationResponseDto.builder()
+                .policyId(foundPolicy.getExternalId())
+                .requestDate(requestLocalDate)
+                .insuredPersons(foundPolicy.getInsuredPersons().stream()
+                        .map(mapToInsuredPersonDto()).collect(Collectors.toList()))
+                .totalPremium(calculateTotalPremium(foundPolicy))
+                .build();
     }
 }

@@ -5,9 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import yeter.ugur.insuranceexample.api.PolicyCreationException;
-import yeter.ugur.insuranceexample.api.PolicyModificationException;
+import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 
 import java.time.Instant;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 /**
  * Global exception handling, provides uniform interface and control on returned error responses.
@@ -15,11 +18,20 @@ import java.time.Instant;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {PolicyCreationException.class, PolicyModificationException.class})
+    @ExceptionHandler(value = {PolicyCreationException.class})
     public ResponseEntity<ErrorResponse> handlePolicyCreationExceptions(Exception exception) {
+        return buildErrorResponse(exception, BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {PolicyIsNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handlePolicyNotFound(Exception exception) {
+        return buildErrorResponse(exception, NOT_FOUND);
+    }
+
+    private ResponseEntity<ErrorResponse> buildErrorResponse(Exception exception, HttpStatus notFound) {
         return new ResponseEntity<>(ErrorResponse.builder()
                 .message(exception.getMessage())
                 .timestamp(Instant.now().toEpochMilli())
-                .build(), HttpStatus.BAD_REQUEST);
+                .build(), notFound);
     }
 }

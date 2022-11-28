@@ -1,8 +1,6 @@
 package yeter.ugur.insuranceexample.api;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,14 +45,14 @@ public class PolicyController {
     }
 
     @GetMapping("/{policyId}")
-    public void requestPolicy(@PathVariable("policyId") String policyId,
-                              @RequestParam(required = false)
-                              String requestDate) {
+    public PolicyInformationResponseDto requestPolicy(@PathVariable("policyId") String policyId,
+                                                      @RequestParam(required = false)
+                                                      String requestDate) {
         LocalDate requestLocalDate = LocalDate.now();
         if (requestDate != null) {
             requestLocalDate = LocalDate.parse(requestDate, DateTimeFormatter.ofPattern(AppConfig.DATE_FORMAT));
         }
         log.debug("policyId:{} and requestDate:{}", policyId, requestDate);
-
+        return policyManager.getPolicy(policyId, requestLocalDate);
     }
 }
