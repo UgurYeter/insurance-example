@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
-import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
-import yeter.ugur.insuranceexample.api.PolicyCreationResponseDto;
-import yeter.ugur.insuranceexample.api.PolicyInformationResponseDto;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
-import yeter.ugur.insuranceexample.api.PolicyModificationRequestDto;
-import yeter.ugur.insuranceexample.api.PolicyModificationResponseDto;
+import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
+import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
+import yeter.ugur.insuranceexample.api.information.PolicyInformationResponseDto;
+import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
+import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
@@ -23,14 +23,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class PolicyManager {
 
-    public static final LocalDate NOW = LocalDate.now();
     private final ExternalPolicyIdGenerator externalPolicyIdGenerator;
     private final PolicyRepository policyRepository;
     private final InsuredPersonRepository insuredPersonRepository;
@@ -57,26 +55,17 @@ public class PolicyManager {
         return PolicyCreationResponseDto.builder()
                 .policyId(storedPolicy.getExternalId())
                 .startDate(storedPolicy.getStartDate())
-                .insuredPersons(storedPolicy.getInsuredPersons().stream()
-                        .map(mapToInsuredPersonDto()).collect(Collectors.toList()))
-                .totalPremium(calculateTotalPremium(storedPolicy))
+                .insuredPersons(toInsuredPersonsDto(storedPolicy))
+                .totalPremium(calculateTotalPremium(storedPolicy.getInsuredPersons()))
                 .build();
     }
 
-    private static BigDecimal calculateTotalPremium(PolicyEntity storedPolicy) {
-        return storedPolicy.getInsuredPersons()
-                .stream()
-                .map(InsuredPersonEntity::getPremium)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private static Function<InsuredPersonEntity, InsuredPersonDto> mapToInsuredPersonDto() {
-        return storedPerson -> InsuredPersonDto.builder()
-                .id(storedPerson.getId())
-                .firstName(storedPerson.getFirstName())
-                .secondName(storedPerson.getSecondName())
-                .premium(storedPerson.getPremium())
-                .build();
+    private static BigDecimal calculateTotalPremium(List<InsuredPersonEntity> insuredPersons) {
+        BigDecimal result = BigDecimal.ZERO;
+        for (InsuredPersonEntity insuredPersonEntity : insuredPersons) {
+            result = result.add(insuredPersonEntity.getPremium());
+        }
+        return result;
     }
 
     private PolicyEntity mapToPolicyEntity(PolicyCreationRequestDto creationRequestDto, String externalPolicyId) {
@@ -133,10 +122,20 @@ public class PolicyManager {
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())
-                .insuredPersons(newPolicyState.getInsuredPersons().stream()
-                        .map(mapToInsuredPersonDto()).collect(Collectors.toList()))
-                .totalPremium(calculateTotalPremium(newPolicyState))
+                .insuredPersons(toInsuredPersonsDto(newPolicyState))
+                .totalPremium(calculateTotalPremium(newPolicyState.getInsuredPersons()))
                 .build();
+    }
+
+    private static List<InsuredPersonDto> toInsuredPersonsDto(PolicyEntity newPolicyState) {
+        return newPolicyState.getInsuredPersons().stream()
+                .map(insuredPersonEntity -> InsuredPersonDto.builder()
+                        .id(insuredPersonEntity.getId())
+                        .firstName(insuredPersonEntity.getFirstName())
+                        .secondName(insuredPersonEntity.getSecondName())
+                        .premium(insuredPersonEntity.getPremium())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private List<Integer> getPersonIdsInModificationRequest(PolicyModificationRequestDto policyModificationRequestDto) {
@@ -170,7 +169,8 @@ public class PolicyManager {
             return Optional.empty();
         }
         filteredPolicies.sort(Comparator.comparing(PolicyEntity::getStartDate));
-        return Optional.of(filteredPolicies.get(foundPolicies.size() - 1));
+        PolicyEntity latestMatchingPolicy = filteredPolicies.get(filteredPolicies.size() - 1);
+        return Optional.of(latestMatchingPolicy);
     }
 
     public PolicyInformationResponseDto getPolicy(String policyId, LocalDate requestLocalDate) {
@@ -180,9 +180,8 @@ public class PolicyManager {
         return PolicyInformationResponseDto.builder()
                 .policyId(foundPolicy.getExternalId())
                 .requestDate(requestLocalDate)
-                .insuredPersons(foundPolicy.getInsuredPersons().stream()
-                        .map(mapToInsuredPersonDto()).collect(Collectors.toList()))
-                .totalPremium(calculateTotalPremium(foundPolicy))
+                .insuredPersons(toInsuredPersonsDto(foundPolicy))
+                .totalPremium(calculateTotalPremium(foundPolicy.getInsuredPersons()))
                 .build();
     }
 }

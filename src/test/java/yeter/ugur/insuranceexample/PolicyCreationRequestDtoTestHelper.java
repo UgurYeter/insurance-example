@@ -1,7 +1,7 @@
 package yeter.ugur.insuranceexample;
 
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
-import yeter.ugur.insuranceexample.api.PolicyCreationRequestDto;
+import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

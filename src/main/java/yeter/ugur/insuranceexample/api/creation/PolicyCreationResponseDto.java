@@ -1,8 +1,9 @@
-package yeter.ugur.insuranceexample.api;
+package yeter.ugur.insuranceexample.api.creation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
+import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
