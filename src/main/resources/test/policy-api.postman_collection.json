@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "59dfdf33-5cd1-45f8-9be6-3c0b8e2f7c05",
+		"name": "policy-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Policy_Creation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"startDate\": \"29.11.2022\",\n    \"insuredPersons\": [\n        {\n            \"firstName\": \"Jane\",\n            \"secondName\": \"Johnson\",\n            \"premium\": 12.90\n        },\n        {\n            \"firstName\": \"Jack\",\n            \"secondName\": \"Doe\",\n            \"premium\": 15.90\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/policies/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"policies",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Modify_Policy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"policyId\": \"G5A0KSVIS\",\n    \"effectiveDate\": \"01.09.2023\",\n    \"insuredPersons\": [\n        {\n            \"id\": 1,\n            \"firstName\": \"Jane\",\n            \"secondName\": \"Johnson\",\n            \"premium\": 12.90\n        },\n        {\n            \"firstName\": \"tset\",\n            \"secondName\": \"Test\",\n            \"premium\": 23\n        },\n             {\n            \"firstName\": \"Ugur\",\n            \"secondName\": \"Test\",\n            \"premium\": 11\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/policies/modify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"policies",
+						"modify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request_Policy_information",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/policies/VKUWRR6WE?requestDate=29.11.2022",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"policies",
+						"VKUWRR6WE"
+					],
+					"query": [
+						{
+							"key": "requestDate",
+							"value": "29.11.2022"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
