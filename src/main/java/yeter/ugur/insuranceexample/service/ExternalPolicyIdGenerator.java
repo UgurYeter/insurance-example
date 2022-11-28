@@ -15,7 +15,6 @@ class ExternalPolicyIdGenerator {
      */
     @VisibleForTesting
     static final int EXTERNAL_POLICY_ID_LENGTH = 9;
-
     private static final char[] CHARSET_AZ_09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
     String generate() {

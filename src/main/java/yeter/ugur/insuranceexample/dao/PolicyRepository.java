@@ -7,6 +7,5 @@ import java.util.List;
 
 @Repository
 public interface PolicyRepository extends JpaRepository<PolicyEntity, Integer> {
-
     List<PolicyEntity> findByExternalId(String externalId);
 }

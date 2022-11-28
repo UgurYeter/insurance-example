@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import yeter.ugur.insuranceexample.api.creation.PolicyCreationException;
+import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 
 import java.time.Instant;
@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(value = {PolicyCreationException.class})
+    @ExceptionHandler(value = {PolicyDateException.class})
     public ResponseEntity<ErrorResponse> handlePolicyCreationExceptions(Exception exception) {
         return buildErrorResponse(exception, BAD_REQUEST);
     }

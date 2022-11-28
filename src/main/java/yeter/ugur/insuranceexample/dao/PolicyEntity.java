@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -63,11 +62,7 @@ public class PolicyEntity implements Serializable {
     @Builder.Default
     private List<InsuredPersonEntity> insuredPersons = new ArrayList<>();
 
-    private void addPerson(InsuredPersonEntity insuredPerson) {
-        insuredPersons.add(insuredPerson);
-    }
-
     public void addPersons(List<InsuredPersonEntity> insuredPersons) {
-        insuredPersons.forEach(this::addPerson);
+        insuredPersons.addAll(insuredPersons);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yeter.ugur.insuranceexample.AppConfig;
-import yeter.ugur.insuranceexample.api.creation.PolicyCreationException;
+import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.api.information.PolicyInformationResponseDto;
@@ -36,7 +36,7 @@ public class PolicyController {
     public PolicyCreationResponseDto createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
         LocalDate startDate = policyCreationRequestDto.getStartDate();
         if (!startDate.isAfter(LocalDate.now())) {
-            throw new PolicyCreationException("Policy start date can only be in future!");
+            throw new PolicyDateException("Policy start date can only be in future!");
         }
         return policyManager.createPolicy(policyCreationRequestDto);
     }
@@ -45,7 +45,7 @@ public class PolicyController {
     public PolicyModificationResponseDto modifyPolicy(@RequestBody PolicyModificationRequestDto policyModificationRequestDto) {
         LocalDate effectiveDate = policyModificationRequestDto.getEffectiveDate();
         if (!effectiveDate.isAfter(LocalDate.now())) {
-            throw new PolicyCreationException("Policy effectiveDate date can only be in future!");
+            throw new PolicyDateException("Policy effectiveDate date can only be in future!");
         }
         return policyManager.modifyPolicy(policyModificationRequestDto);
     }
