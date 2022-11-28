@@ -12,6 +12,9 @@ public final class PolicyPremiumHelper {
     }
 
     public static BigDecimal calculateTotalPremium(List<InsuredPersonEntity> insuredPersons) {
+        if(insuredPersons == null){
+            return BigDecimal.ZERO;
+        }
         BigDecimal result = BigDecimal.ZERO;
         for (InsuredPersonEntity insuredPersonEntity : insuredPersons) {
             result = result.add(insuredPersonEntity.getPremium());
