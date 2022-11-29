@@ -14,6 +14,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toInsuredPersonEntities;
@@ -42,12 +43,19 @@ public class PolicyModificationService {
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
 
         List<InsuredPersonEntity> insuredPersonEntities = toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons());
-        List<InsuredPersonEntity> existingPersons = insuredPersonRepository
-                .findAllById(collectPersonIds(insuredPersonEntities));
+        Set<Integer> personIdsInTheRequest = collectPersonIds(toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons()));
+        List<InsuredPersonEntity> existingPersons = basePolicy.getInsuredPersons()
+                .stream()
+                .filter(person -> personIdsInTheRequest.contains(person.getId()))
+                .collect(Collectors.toList());
+
         List<InsuredPersonEntity> newInsurancePersonsToCreate = collectPersonsWithNullId(insuredPersonEntities);
         PolicyEntity newPolicyState = buildPolicyEntity(policyModificationRequestDto.getEffectiveDate(), basePolicy.getExternalId());
         newPolicyState = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(newPolicyState, newInsurancePersonsToCreate);
         newPolicyState.addPersons(existingPersons);
+        if(basePolicy.getStartDate().isEqual(policyModificationRequestDto.getEffectiveDate())){
+            policyStateHelper.deleteById(basePolicy.getId());
+        }
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())
@@ -65,12 +73,12 @@ public class PolicyModificationService {
     }
 
     @VisibleForTesting
-    List<Integer> collectPersonIds(List<InsuredPersonEntity> insuredPersons) {
+    Set<Integer> collectPersonIds(List<InsuredPersonEntity> insuredPersons) {
         return insuredPersons
                 .stream()
                 .map(InsuredPersonEntity::getId)
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @VisibleForTesting

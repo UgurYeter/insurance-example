@@ -2,6 +2,7 @@ package yeter.ugur.insuranceexample.dao;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -54,7 +55,7 @@ public class PolicyEntity implements Serializable {
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
-    })
+    }, fetch = FetchType.EAGER)
     @JoinTable(name = "policy_person",
             joinColumns = @JoinColumn(name = "policy_internal_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")

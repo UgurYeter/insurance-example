@@ -38,4 +38,8 @@ public class PolicyStateHelper {
         PolicyEntity latestMatchingPolicy = filteredPolicies.get(filteredPolicies.size() - 1);
         return Optional.of(latestMatchingPolicy);
     }
+
+    public void deleteById(int id) {
+        policyRepository.deleteById(id);
+    }
 }
