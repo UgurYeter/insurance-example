@@ -4,22 +4,21 @@ import org.junit.jupiter.api.Test;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 
-import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_1;
+import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_2;
+import static yeter.ugur.insuranceexample.TestHelper.PERSON_ID_1;
+import static yeter.ugur.insuranceexample.TestHelper.PERSON_ID_2;
+import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_1;
+import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_2;
+import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_1;
+import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_2;
 
 class InsuredPersonMapperTest {
 
-    private static final int PERSON_ID_1 = 1;
-    private static final String FIRST_NAME_1 = "first-name";
-    private static final String SECOND_NAME_1 = "second-name";
-    private static final BigDecimal PREMIUM_1 = BigDecimal.valueOf(12.40);
-    private static final int PERSON_ID_2 = 2;
-    private static final String FIRST_NAME_2 = "first-name-2";
-    private static final String SECOND_NAME_2 = "second-name-2";
-    private static final BigDecimal PREMIUM_2 = BigDecimal.valueOf(20.00);
 
     @Test
     void itMapsToInsuredPersonEntity() {

@@ -13,6 +13,9 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 class PolicyPremiumHelperTest {
 
+    private static final BigDecimal PREMIUM_1 = BigDecimal.valueOf(12.10);
+    private static final BigDecimal PREMIUM_2 = BigDecimal.valueOf(5.59);
+
     @ParameterizedTest
     @MethodSource("supplyPremiums")
     void calculateTotalPremium(List<InsuredPersonEntity> insuredPersons, BigDecimal expected) {
@@ -36,18 +39,18 @@ class PolicyPremiumHelperTest {
                         BigDecimal.ONE),
                 Arguments.of(
                         List.of(InsuredPersonEntity.builder()
-                                        .premium(BigDecimal.valueOf(12.10))
+                                        .premium(PREMIUM_1)
                                         .build(),
                                 InsuredPersonEntity.builder()
-                                        .premium(BigDecimal.valueOf(5.59))
+                                        .premium(PREMIUM_2)
                                         .build()),
                         BigDecimal.valueOf(17.69)),
                 Arguments.of(
                         List.of(InsuredPersonEntity.builder()
-                                        .premium(BigDecimal.valueOf(12.10))
+                                        .premium(PREMIUM_1)
                                         .build(),
                                 InsuredPersonEntity.builder()
-                                        .premium(BigDecimal.valueOf(5.59))
+                                        .premium(PREMIUM_2)
                                         .build(),
                                 InsuredPersonEntity.builder()
                                         .premium(BigDecimal.valueOf(10))
