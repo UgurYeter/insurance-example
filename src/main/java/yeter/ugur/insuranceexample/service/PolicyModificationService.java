@@ -9,6 +9,7 @@ import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
+import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 
 import java.time.Clock;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.toInsuredPersonEntities;
+import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toInsuredPersonEntities;
 
 @Service
 public class PolicyModificationService {
@@ -49,7 +50,6 @@ public class PolicyModificationService {
                 .startDate(policyModificationRequestDto.getEffectiveDate())
                 .build();
         newPolicyState.addPersons(personsOfModifiedPolicy);
-        newPolicyState = policyRepository.save(newPolicyState);
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())

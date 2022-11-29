@@ -14,9 +14,9 @@ import yeter.ugur.insuranceexample.dao.PolicyRepository;
 
 import java.time.Clock;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static yeter.ugur.insuranceexample.service.InsuredPersonMapper.toInsuredPersonEntities;
+import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toInsuredPersonEntities;
+import static yeter.ugur.insuranceexample.service.mapper.PolicyCreationResponseDtoMapper.toPolicyCreationResponseDto;
 
 @Slf4j
 @Service
@@ -40,15 +40,10 @@ public class PolicyCreationService {
     @Transactional
     public PolicyCreationResponseDto createPolicy(PolicyCreationRequestDto creationRequestDto) {
         String externalPolicyId = generateUniquePolicyId();
-        List<InsuredPersonEntity> insuredPersons = toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
         PolicyEntity policyEntity = mapToPolicyEntity(creationRequestDto, externalPolicyId);
+        List<InsuredPersonEntity> insuredPersons = toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
         PolicyEntity storedPolicy = createPolicyWithInsuredPersons(policyEntity, insuredPersons);
-        return PolicyCreationResponseDto.builder()
-                .policyId(storedPolicy.getExternalId())
-                .startDate(storedPolicy.getStartDate())
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(storedPolicy.getInsuredPersons()))
-                .totalPremium(PolicyPremiumHelper.calculateTotalPremium(storedPolicy.getInsuredPersons()))
-                .build();
+        return toPolicyCreationResponseDto(storedPolicy.getInsuredPersons(), storedPolicy.getExternalId(), storedPolicy.getStartDate());
     }
 
     private PolicyEntity mapToPolicyEntity(PolicyCreationRequestDto creationRequestDto, String externalPolicyId) {

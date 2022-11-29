@@ -3,6 +3,7 @@ package yeter.ugur.insuranceexample.service;
 import org.junit.jupiter.api.Test;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
+import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 
 import java.util.Comparator;
 import java.util.List;
