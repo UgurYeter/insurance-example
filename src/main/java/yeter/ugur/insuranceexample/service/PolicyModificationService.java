@@ -8,11 +8,10 @@ import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDt
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
-import yeter.ugur.insuranceexample.dao.PolicyRepository;
 import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 
 import java.time.Clock;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,16 +21,16 @@ import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toI
 @Service
 public class PolicyModificationService {
     private final InsuredPersonRepository insuredPersonRepository;
-    private final PolicyRepository policyRepository;
+    private final PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
     private final PolicyStateHelper policyStateHelper;
     private final Clock clock;
 
     public PolicyModificationService(InsuredPersonRepository insuredPersonRepository,
-                                     PolicyRepository policyRepository,
+                                     PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
                                      PolicyStateHelper policyStateHelper,
                                      Clock clock) {
         this.insuredPersonRepository = insuredPersonRepository;
-        this.policyRepository = policyRepository;
+        this.policyAndInsuredPersonStorageHelper = policyAndInsuredPersonStorageHelper;
         this.policyStateHelper = policyStateHelper;
         this.clock = clock;
     }
@@ -42,14 +41,13 @@ public class PolicyModificationService {
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
 
-        List<InsuredPersonEntity> personsOfModifiedPolicy = getPersonsOfModifiedPolicy(
-                toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons()));
-        PolicyEntity newPolicyState = PolicyEntity.builder()
-                .externalId(basePolicy.getExternalId())
-                .createdAt(clock.instant().toEpochMilli())
-                .startDate(policyModificationRequestDto.getEffectiveDate())
-                .build();
-        newPolicyState.addPersons(personsOfModifiedPolicy);
+        List<InsuredPersonEntity> insuredPersonEntities = toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons());
+        List<InsuredPersonEntity> existingPersons = insuredPersonRepository
+                .findAllById(collectPersonIds(insuredPersonEntities));
+        List<InsuredPersonEntity> newInsurancePersonsToCreate = collectPersonsWithNullId(insuredPersonEntities);
+        PolicyEntity newPolicyState = buildPolicyEntity(policyModificationRequestDto.getEffectiveDate(), basePolicy.getExternalId());
+        newPolicyState = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(newPolicyState, newInsurancePersonsToCreate);
+        newPolicyState.addPersons(existingPersons);
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())
@@ -58,16 +56,12 @@ public class PolicyModificationService {
                 .build();
     }
 
-    private List<InsuredPersonEntity> getPersonsOfModifiedPolicy(List<InsuredPersonEntity> insuredPersonEntities) {
-        List<InsuredPersonEntity> existingPersons = insuredPersonRepository
-                .findAllById(collectPersonIds(insuredPersonEntities));
-        List<InsuredPersonEntity> personsOfModifiedPolicy = new ArrayList<>(existingPersons);
-        List<InsuredPersonEntity> newInsurancePersonsToCreate = collectPersonsWithNullId(insuredPersonEntities);
-        if (!newInsurancePersonsToCreate.isEmpty()) {
-            List<InsuredPersonEntity> newlyCreatedPersons = insuredPersonRepository.saveAll(newInsurancePersonsToCreate);
-            personsOfModifiedPolicy.addAll(newlyCreatedPersons);
-        }
-        return personsOfModifiedPolicy;
+    private PolicyEntity buildPolicyEntity(LocalDate effectiveDate, String externalId) {
+        return PolicyEntity.builder()
+                .externalId(externalId)
+                .createdAt(clock.instant().toEpochMilli())
+                .startDate(effectiveDate)
+                .build();
     }
 
     @VisibleForTesting

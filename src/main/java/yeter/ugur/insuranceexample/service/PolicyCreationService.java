@@ -4,11 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
-import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
 
@@ -24,16 +22,16 @@ public class PolicyCreationService {
 
     private final ExternalPolicyIdGenerator externalPolicyIdGenerator;
     private final PolicyRepository policyRepository;
-    private final InsuredPersonRepository insuredPersonRepository;
+    private final PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
     private final Clock clock;
 
     public PolicyCreationService(ExternalPolicyIdGenerator externalPolicyIdGenerator,
                                  PolicyRepository policyRepository,
-                                 InsuredPersonRepository insuredPersonRepository,
+                                 PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
                                  Clock clock) {
         this.externalPolicyIdGenerator = externalPolicyIdGenerator;
         this.policyRepository = policyRepository;
-        this.insuredPersonRepository = insuredPersonRepository;
+        this.policyAndInsuredPersonStorageHelper = policyAndInsuredPersonStorageHelper;
         this.clock = clock;
     }
 
@@ -42,7 +40,7 @@ public class PolicyCreationService {
         String externalPolicyId = generateUniquePolicyId();
         PolicyEntity policyEntity = mapToPolicyEntity(creationRequestDto, externalPolicyId);
         List<InsuredPersonEntity> insuredPersons = toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
-        PolicyEntity storedPolicy = createPolicyWithInsuredPersons(policyEntity, insuredPersons);
+        PolicyEntity storedPolicy = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(policyEntity, insuredPersons);
         return toPolicyCreationResponseDto(storedPolicy.getInsuredPersons(), storedPolicy.getExternalId(), storedPolicy.getStartDate());
     }
 
@@ -68,14 +66,5 @@ public class PolicyCreationService {
         return generatedId;
     }
 
-    @VisibleForTesting
-    PolicyEntity createPolicyWithInsuredPersons(PolicyEntity policyEntity, List<InsuredPersonEntity> insuredPersons) {
-        PolicyEntity storedPolicy = policyRepository.save(policyEntity);
-        if (!CollectionUtils.isEmpty(insuredPersons)) {
-            List<InsuredPersonEntity> storedPersons = insuredPersonRepository.saveAll(insuredPersons);
-            storedPolicy.addPersons(storedPersons);
-        }
 
-        return storedPolicy;
-    }
 }
