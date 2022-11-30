@@ -14,9 +14,9 @@ import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_
 import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_2;
 import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE;
 
-public final class PolicyCreationRequestDtoTestHelper {
+public final class PolicyTestDataHelper {
 
-    private PolicyCreationRequestDtoTestHelper() {
+    private PolicyTestDataHelper() {
 
     }
 

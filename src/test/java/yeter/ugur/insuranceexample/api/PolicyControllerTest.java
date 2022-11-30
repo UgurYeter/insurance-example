@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import yeter.ugur.insuranceexample.helper.PolicyCreationRequestDtoTestHelper;
+import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.service.PolicyCreationService;
@@ -34,7 +34,7 @@ class PolicyControllerTest {
 
     @Test
     void itVerifiesPolicyCreationRequestDto() {
-        PolicyCreationRequestDto policyCreationRequestDto = PolicyCreationRequestDtoTestHelper.prototypeRequestWithInsuredPersons();
+        PolicyCreationRequestDto policyCreationRequestDto = PolicyTestDataHelper.prototypeRequestWithInsuredPersons();
         doThrow(new PolicyDateException("Verification Failed!"))
                 .when(policyRequestValidator)
                 .verifyCreatePolicyOrThrow(policyCreationRequestDto);
@@ -48,7 +48,7 @@ class PolicyControllerTest {
 
     @Test
     void itStartsPolicyCreationWhenRequestValid() {
-        PolicyCreationRequestDto policyCreationRequestDto = PolicyCreationRequestDtoTestHelper.prototypeRequestWithInsuredPersons();
+        PolicyCreationRequestDto policyCreationRequestDto = PolicyTestDataHelper.prototypeRequestWithInsuredPersons();
         doNothing()
                 .when(policyRequestValidator)
                 .verifyCreatePolicyOrThrow(policyCreationRequestDto);

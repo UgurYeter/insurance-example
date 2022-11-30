@@ -33,4 +33,13 @@ public final class InsuredPersonEntityTestHelper {
                         .premium(PREMIUM_2)
                         .build());
     }
+
+    public static InsuredPersonEntity getInsuredPersonEntity() {
+        return InsuredPersonEntity.builder()
+                .id(PERSON_ID_1)
+                .firstName(FIRST_NAME_1)
+                .secondName(SECOND_NAME_1)
+                .premium(PREMIUM_1)
+                .build();
+    }
 }

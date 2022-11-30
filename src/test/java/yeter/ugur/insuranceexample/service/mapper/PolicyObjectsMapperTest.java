@@ -9,7 +9,7 @@ import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
-import yeter.ugur.insuranceexample.helper.PolicyCreationRequestDtoTestHelper;
+import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
 import yeter.ugur.insuranceexample.service.helper.PolicyPremiumHelper;
 import yeter.ugur.insuranceexample.service.helper.TimeHelper;
 
@@ -52,7 +52,7 @@ class PolicyObjectsMapperTest {
     @Test
     void itMapsToPolicyEntityWithoutInsuredPersons() {
         when(timeHelper.getCurrentMilliSecond()).thenReturn(NOW_IN_MILLI);
-        PolicyCreationRequestDto creationRequestDto = PolicyCreationRequestDtoTestHelper.prototypeRequestWithInsuredPersons();
+        PolicyCreationRequestDto creationRequestDto = PolicyTestDataHelper.prototypeRequestWithInsuredPersons();
 
         PolicyEntity policyCreationResponseDto = policyObjectsMapper
                 .mapToPolicyEntityWithoutInsuredPersons(creationRequestDto,
