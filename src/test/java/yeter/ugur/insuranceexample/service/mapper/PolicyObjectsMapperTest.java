@@ -10,13 +10,13 @@ import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.helper.PolicyCreationRequestDtoTestHelper;
-import yeter.ugur.insuranceexample.helper.TestMockDataHelper;
 import yeter.ugur.insuranceexample.service.helper.PolicyPremiumHelper;
 import yeter.ugur.insuranceexample.service.helper.TimeHelper;
 
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static yeter.ugur.insuranceexample.helper.InsuredPersonEntityTestHelper.getInsuredPersonEntities;
 import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.EXTERNAL_POLICY_ID;
@@ -28,12 +28,14 @@ class PolicyObjectsMapperTest {
 
     @Mock
     private TimeHelper timeHelper;
+    @Mock
+    private InsuredPersonMapper insuredPersonMapper;
     @InjectMocks
     private PolicyObjectsMapper policyObjectsMapper;
 
     @Test
     void itMapsPolicyCreationResponseDto() {
-         List<InsuredPersonEntity> insuredPersonEntities = getInsuredPersonEntities();
+        List<InsuredPersonEntity> insuredPersonEntities = getInsuredPersonEntities();
 
         PolicyCreationResponseDto policyCreationResponseDto = policyObjectsMapper.toPolicyCreationResponseDto(
                 insuredPersonEntities,
@@ -44,8 +46,7 @@ class PolicyObjectsMapperTest {
         assertThat(policyCreationResponseDto.getStartDate()).isEqualTo(START_DATE);
         assertThat(policyCreationResponseDto.getTotalPremium())
                 .isEqualTo(PolicyPremiumHelper.calculateTotalPremium(insuredPersonEntities));
-        assertThat(policyCreationResponseDto.getInsuredPersons())
-                .isEqualTo(InsuredPersonMapper.toInsuredPersonsDto(insuredPersonEntities));
+        verify(insuredPersonMapper).toInsuredPersonsDto(insuredPersonEntities);
     }
 
     @Test
@@ -55,7 +56,7 @@ class PolicyObjectsMapperTest {
 
         PolicyEntity policyCreationResponseDto = policyObjectsMapper
                 .mapToPolicyEntityWithoutInsuredPersons(creationRequestDto,
-                EXTERNAL_POLICY_ID
+                        EXTERNAL_POLICY_ID
                 );
 
         assertThat(policyCreationResponseDto.getExternalId()).isEqualTo(EXTERNAL_POLICY_ID);

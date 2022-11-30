@@ -14,9 +14,11 @@ import java.util.List;
 @Component
 public class PolicyObjectsMapper {
 
+    private final InsuredPersonMapper insuredPersonMapper;
     private final TimeHelper timeHelper;
 
-    public PolicyObjectsMapper(TimeHelper timeHelper) {
+    public PolicyObjectsMapper(InsuredPersonMapper insuredPersonMapper, TimeHelper timeHelper) {
+        this.insuredPersonMapper = insuredPersonMapper;
         this.timeHelper = timeHelper;
     }
 
@@ -26,7 +28,7 @@ public class PolicyObjectsMapper {
         return PolicyCreationResponseDto.builder()
                 .policyId(externalId)
                 .startDate(startDate)
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(insuredPersons))
+                .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(insuredPersons))
                 .totalPremium(PolicyPremiumHelper.calculateTotalPremium(insuredPersons))
                 .build();
     }

@@ -20,7 +20,7 @@ import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_
 
 class InsuredPersonMapperTest {
 
-
+    InsuredPersonMapper insuredPersonMapper = new InsuredPersonMapper();
     @Test
     void itMapsToInsuredPersonEntity() {
         List<InsuredPersonDto> insuredPersonDtos = List.of(InsuredPersonDto.builder()
@@ -30,7 +30,7 @@ class InsuredPersonMapperTest {
                 .premium(PREMIUM_1)
                 .build());
 
-        InsuredPersonEntity insuredPersonEntity = InsuredPersonMapper.toInsuredPersonEntities(insuredPersonDtos).get(0);
+        InsuredPersonEntity insuredPersonEntity = insuredPersonMapper.toInsuredPersonEntities(insuredPersonDtos).get(0);
 
         assertThat(insuredPersonEntity.getId()).isEqualTo(PERSON_ID_1);
         assertThat(insuredPersonEntity.getFirstName()).isEqualTo(FIRST_NAME_1);
@@ -55,7 +55,7 @@ class InsuredPersonMapperTest {
                         .build()
         );
 
-        List<InsuredPersonEntity> insuredPersonEntities = InsuredPersonMapper.toInsuredPersonEntities(insuredPersonDtos);
+        List<InsuredPersonEntity> insuredPersonEntities = insuredPersonMapper.toInsuredPersonEntities(insuredPersonDtos);
         insuredPersonEntities.sort(Comparator.comparingInt(InsuredPersonEntity::getId));
 
         InsuredPersonEntity insuredPersonEntityOne = insuredPersonEntities.get(0);
@@ -89,7 +89,7 @@ class InsuredPersonMapperTest {
 
         );
 
-        List<InsuredPersonDto> insuredPersonDtos = InsuredPersonMapper.toInsuredPersonsDto(insuredPersons);
+        List<InsuredPersonDto> insuredPersonDtos = insuredPersonMapper.toInsuredPersonsDto(insuredPersons);
 
         insuredPersonDtos.sort(Comparator.comparingInt(InsuredPersonDto::getId));
         InsuredPersonEntity insuredPersonEntityOne = insuredPersons.get(0);

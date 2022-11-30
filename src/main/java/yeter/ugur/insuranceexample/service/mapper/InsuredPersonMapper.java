@@ -1,25 +1,23 @@
 package yeter.ugur.insuranceexample.service.mapper;
 
+import org.springframework.stereotype.Component;
 import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class InsuredPersonMapper {
+@Component
+public class InsuredPersonMapper {
 
-    private InsuredPersonMapper() {
-
-    }
-
-    public static List<InsuredPersonEntity> toInsuredPersonEntities(List<InsuredPersonDto> insuredPersons) {
+    public List<InsuredPersonEntity> toInsuredPersonEntities(List<InsuredPersonDto> insuredPersons) {
         return insuredPersons
                 .stream()
-                .map(InsuredPersonMapper::toInsuredPersonEntity)
+                .map(this::toInsuredPersonEntity)
                 .collect(Collectors.toList());
     }
 
-    private static InsuredPersonEntity toInsuredPersonEntity(InsuredPersonDto person) {
+    private InsuredPersonEntity toInsuredPersonEntity(InsuredPersonDto person) {
         return InsuredPersonEntity.builder()
                 .id(person.getId())
                 .firstName(person.getFirstName())
@@ -28,7 +26,7 @@ public final class InsuredPersonMapper {
                 .build();
     }
 
-    public static List<InsuredPersonDto> toInsuredPersonsDto(List<InsuredPersonEntity> insuredPersons) {
+    public List<InsuredPersonDto> toInsuredPersonsDto(List<InsuredPersonEntity> insuredPersons) {
         return insuredPersons.stream()
                 .map(insuredPersonEntity -> InsuredPersonDto.builder()
                         .id(insuredPersonEntity.getId())

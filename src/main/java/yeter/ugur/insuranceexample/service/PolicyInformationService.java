@@ -14,9 +14,13 @@ import static yeter.ugur.insuranceexample.service.helper.PolicyPremiumHelper.cal
 @Service
 public class PolicyInformationService {
     private final PolicyStateHelper policyStateHelper;
+    private final InsuredPersonMapper insuredPersonMapper;
 
-    public PolicyInformationService(PolicyStateHelper policyStateHelper) {
+
+    public PolicyInformationService(PolicyStateHelper policyStateHelper,
+                                    InsuredPersonMapper insuredPersonMapper) {
         this.policyStateHelper = policyStateHelper;
+        this.insuredPersonMapper = insuredPersonMapper;
     }
 
     public PolicyInformationResponseDto getPolicyInformation(String policyId, LocalDate requestLocalDate) {
@@ -26,7 +30,7 @@ public class PolicyInformationService {
         return PolicyInformationResponseDto.builder()
                 .policyId(foundPolicy.getExternalId())
                 .requestDate(requestLocalDate)
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(foundPolicy.getInsuredPersons()))
+                .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(foundPolicy.getInsuredPersons()))
                 .totalPremium(calculateTotalPremium(foundPolicy.getInsuredPersons()))
                 .build();
     }

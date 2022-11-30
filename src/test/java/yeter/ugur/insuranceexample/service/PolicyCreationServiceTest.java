@@ -5,8 +5,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.helper.PolicyCreationRequestDtoTestHelper;
+import yeter.ugur.insuranceexample.service.helper.ExternalPolicyIdProvider;
+import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 import yeter.ugur.insuranceexample.service.mapper.PolicyObjectsMapper;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.EXTERNAL_POLICY_ID;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyCreationServiceTest {
@@ -17,13 +24,24 @@ class PolicyCreationServiceTest {
     @Mock
     private PolicyObjectsMapper policyObjectsMapper;
 
+    @Mock
+    private InsuredPersonMapper insuredPersonMapper;
+    @Mock
+    private ExternalPolicyIdProvider externalPolicyIdProvider;
+
     @InjectMocks
     private PolicyCreationService policyCreationService;
 
     @Test
     void createPolicy() {
+//        when(externalPolicyIdProvider.generateExternalPolicyId()).thenReturn(EXTERNAL_POLICY_ID);
+//        PolicyCreationRequestDto creationRequestDto = PolicyCreationRequestDtoTestHelper
+//                .prototypeRequestWithInsuredPersons();
+//
+//        policyCreationService.createPolicy(creationRequestDto);
+//
+//        verify(policyObjectsMapper).mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, EXTERNAL_POLICY_ID);
 
-//        policyCreationService.createPolicy(PolicyCreationRequestDtoTestHelper.prototypeRequestWithInsuredPersons());
     }
 
 

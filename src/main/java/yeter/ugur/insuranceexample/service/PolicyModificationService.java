@@ -6,37 +6,36 @@ import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
-import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.service.helper.PolicyPremiumHelper;
 import yeter.ugur.insuranceexample.service.helper.PolicyStateHelper;
+import yeter.ugur.insuranceexample.service.helper.TimeHelper;
 import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 
-import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toInsuredPersonEntities;
 
 @Service
 public class PolicyModificationService {
-    private final InsuredPersonRepository insuredPersonRepository;
     private final PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
     private final PolicyStateHelper policyStateHelper;
-    private final Clock clock;
+    private final TimeHelper timeHelper;
+    private final InsuredPersonMapper insuredPersonMapper;
 
-    public PolicyModificationService(InsuredPersonRepository insuredPersonRepository,
-                                     PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
+    public PolicyModificationService(PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
                                      PolicyStateHelper policyStateHelper,
-                                     Clock clock) {
-        this.insuredPersonRepository = insuredPersonRepository;
+                                     TimeHelper timeHelper,
+                                     InsuredPersonMapper insuredPersonMapper) {
         this.policyAndInsuredPersonStorageHelper = policyAndInsuredPersonStorageHelper;
         this.policyStateHelper = policyStateHelper;
-        this.clock = clock;
+        this.timeHelper = timeHelper;
+        this.insuredPersonMapper = insuredPersonMapper;
     }
+
 
     public PolicyModificationResponseDto modifyPolicy(PolicyModificationRequestDto policyModificationRequestDto) {
         PolicyEntity basePolicy =
@@ -44,8 +43,9 @@ public class PolicyModificationService {
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
 
-        List<InsuredPersonEntity> insuredPersonEntities = toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons());
-        Set<Integer> personIdsInTheRequest = collectPersonIds(toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons()));
+        List<InsuredPersonEntity> insuredPersonEntities = insuredPersonMapper
+                .toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons());
+        Set<Integer> personIdsInTheRequest = collectPersonIds(insuredPersonEntities);
         List<InsuredPersonEntity> existingPersons = basePolicy.getInsuredPersons()
                 .stream()
                 .filter(person -> personIdsInTheRequest.contains(person.getId()))
@@ -55,13 +55,13 @@ public class PolicyModificationService {
         PolicyEntity newPolicyState = buildPolicyEntity(policyModificationRequestDto.getEffectiveDate(), basePolicy.getExternalId());
         newPolicyState = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(newPolicyState, newInsurancePersonsToCreate);
         newPolicyState.addPersons(existingPersons);
-        if(basePolicy.getStartDate().isEqual(policyModificationRequestDto.getEffectiveDate())){
+        if (basePolicy.getStartDate().isEqual(policyModificationRequestDto.getEffectiveDate())) {
             policyStateHelper.deleteById(basePolicy.getId());
         }
         return PolicyModificationResponseDto.builder()
                 .policyId(newPolicyState.getExternalId())
                 .effectiveDate(newPolicyState.getStartDate())
-                .insuredPersons(InsuredPersonMapper.toInsuredPersonsDto(newPolicyState.getInsuredPersons()))
+                .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(newPolicyState.getInsuredPersons()))
                 .totalPremium(PolicyPremiumHelper.calculateTotalPremium(newPolicyState.getInsuredPersons()))
                 .build();
     }
@@ -69,7 +69,7 @@ public class PolicyModificationService {
     private PolicyEntity buildPolicyEntity(LocalDate effectiveDate, String externalId) {
         return PolicyEntity.builder()
                 .externalId(externalId)
-                .createdAt(clock.instant().toEpochMilli())
+                .createdAt(timeHelper.getCurrentMilliSecond())
                 .startDate(effectiveDate)
                 .build();
     }

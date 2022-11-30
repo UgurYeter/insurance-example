@@ -7,12 +7,11 @@ import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
+import yeter.ugur.insuranceexample.service.helper.ExternalPolicyIdProvider;
+import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 import yeter.ugur.insuranceexample.service.mapper.PolicyObjectsMapper;
 
 import java.util.List;
-import java.util.UUID;
-
-import static yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper.toInsuredPersonEntities;
 
 @Slf4j
 @Service
@@ -20,19 +19,25 @@ public class PolicyCreationService {
 
     private final PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
     private final PolicyObjectsMapper policyObjectsMapper;
+    private final InsuredPersonMapper insuredPersonMapper;
+    private final ExternalPolicyIdProvider externalPolicyIdProvider;
 
     public PolicyCreationService(
             PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
-            PolicyObjectsMapper policyObjectsMapper) {
+            PolicyObjectsMapper policyObjectsMapper,
+            InsuredPersonMapper insuredPersonMapper,
+            ExternalPolicyIdProvider externalPolicyIdProvider) {
         this.policyAndInsuredPersonStorageHelper = policyAndInsuredPersonStorageHelper;
         this.policyObjectsMapper = policyObjectsMapper;
+        this.insuredPersonMapper = insuredPersonMapper;
+        this.externalPolicyIdProvider = externalPolicyIdProvider;
     }
 
     @Transactional
     public PolicyCreationResponseDto createPolicy(PolicyCreationRequestDto creationRequestDto) {
-        String externalPolicyId = UUID.randomUUID().toString();
+        String externalPolicyId = externalPolicyIdProvider.generateExternalPolicyId();
         PolicyEntity policyEntity = policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, externalPolicyId);
-        List<InsuredPersonEntity> insuredPersons = toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
+        List<InsuredPersonEntity> insuredPersons = insuredPersonMapper.toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
         PolicyEntity storedPolicy = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(policyEntity, insuredPersons);
         return policyObjectsMapper.
                 toPolicyCreationResponseDto(
