@@ -1,4 +1,4 @@
-package yeter.ugur.insuranceexample.service;
+package yeter.ugur.insuranceexample.service.helper;
 
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 

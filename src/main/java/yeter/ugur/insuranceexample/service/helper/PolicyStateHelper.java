@@ -1,4 +1,4 @@
-package yeter.ugur.insuranceexample.service;
+package yeter.ugur.insuranceexample.service.helper;
 
 import org.springframework.stereotype.Component;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;

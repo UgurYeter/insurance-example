@@ -9,14 +9,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_1;
-import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_2;
-import static yeter.ugur.insuranceexample.TestHelper.PERSON_ID_1;
-import static yeter.ugur.insuranceexample.TestHelper.PERSON_ID_2;
-import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_1;
-import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_2;
-import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_1;
-import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_2;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.FIRST_NAME_1;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.FIRST_NAME_2;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.PERSON_ID_1;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.PERSON_ID_2;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.PREMIUM_1;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.PREMIUM_2;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_1;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_2;
 
 class InsuredPersonMapperTest {
 

@@ -5,53 +5,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
-import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
-import yeter.ugur.insuranceexample.dao.PolicyEntity;
-import yeter.ugur.insuranceexample.dao.PolicyRepository;
-
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static yeter.ugur.insuranceexample.TestHelper.EXTERNAL_POLICY_ID;
-import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_1;
-import static yeter.ugur.insuranceexample.TestHelper.FIRST_NAME_2;
-import static yeter.ugur.insuranceexample.TestHelper.NOW_IN_MILLI;
-import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_1;
-import static yeter.ugur.insuranceexample.TestHelper.PREMIUM_2;
-import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_1;
-import static yeter.ugur.insuranceexample.TestHelper.SECOND_NAME_2;
-import static yeter.ugur.insuranceexample.TestHelper.START_DATE;
+import yeter.ugur.insuranceexample.helper.PolicyCreationRequestDtoTestHelper;
+import yeter.ugur.insuranceexample.service.mapper.PolicyObjectsMapper;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyCreationServiceTest {
 
     @Mock
-    private ExternalPolicyIdGenerator externalPolicyIdGenerator;
+    private PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
 
     @Mock
-    private PolicyRepository policyRepository;
-
-    @Mock
-    private InsuredPersonRepository insuredPersonRepository;
+    private PolicyObjectsMapper policyObjectsMapper;
 
     @InjectMocks
     private PolicyCreationService policyCreationService;
 
     @Test
-    void itChecksIfPolicyIdUnique() {
-        when(externalPolicyIdGenerator.generate()).thenReturn(EXTERNAL_POLICY_ID);
-        when(policyRepository.findByExternalId(EXTERNAL_POLICY_ID)).thenReturn(List.of());
+    void createPolicy() {
 
-        String uniqueExternalPolicyId = policyCreationService.generateUniquePolicyId();
-
-        verify(policyRepository).findByExternalId(EXTERNAL_POLICY_ID);
-        assertThat(uniqueExternalPolicyId).isEqualTo(EXTERNAL_POLICY_ID);
-        verifyNoMoreInteractions(policyRepository);
+//        policyCreationService.createPolicy(PolicyCreationRequestDtoTestHelper.prototypeRequestWithInsuredPersons());
     }
 
 

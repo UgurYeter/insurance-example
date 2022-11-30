@@ -4,11 +4,12 @@ import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.information.PolicyInformationResponseDto;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
+import yeter.ugur.insuranceexample.service.helper.PolicyStateHelper;
 import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 
 import java.time.LocalDate;
 
-import static yeter.ugur.insuranceexample.service.PolicyPremiumHelper.calculateTotalPremium;
+import static yeter.ugur.insuranceexample.service.helper.PolicyPremiumHelper.calculateTotalPremium;
 
 @Service
 public class PolicyInformationService {

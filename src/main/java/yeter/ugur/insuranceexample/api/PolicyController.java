@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yeter.ugur.insuranceexample.AppConfig;
-import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
+import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.api.information.PolicyInformationResponseDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
@@ -31,24 +31,20 @@ public class PolicyController {
     private final PolicyCreationService policyCreationService;
     private final PolicyModificationService policyModificationService;
     private final PolicyInformationService policyInformationService;
+    private final PolicyRequestValidator policyRequestValidator;
 
     public PolicyController(PolicyCreationService policyCreationService,
                             PolicyModificationService policyModificationService,
-                            PolicyInformationService policyInformationService) {
+                            PolicyInformationService policyInformationService, PolicyRequestValidator policyRequestValidator) {
         this.policyCreationService = policyCreationService;
         this.policyModificationService = policyModificationService;
         this.policyInformationService = policyInformationService;
+        this.policyRequestValidator = policyRequestValidator;
     }
 
     @PostMapping("/create")
     public PolicyCreationResponseDto createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
-        LocalDate startDate = policyCreationRequestDto.getStartDate();
-        if(startDate == null){
-            throw new PolicyDateException("Policy start date can not be null!");
-        }
-        if (!startDate.isAfter(LocalDate.now())) {
-            throw new PolicyDateException("Policy start date can only be in future!");
-        }
+        policyRequestValidator.verifyCreatePolicyOrThrow(policyCreationRequestDto);
         return policyCreationService.createPolicy(policyCreationRequestDto);
     }
 
