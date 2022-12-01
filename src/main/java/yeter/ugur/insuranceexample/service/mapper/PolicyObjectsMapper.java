@@ -23,10 +23,10 @@ public class PolicyObjectsMapper {
     }
 
     public PolicyCreationResponseDto toPolicyCreationResponseDto(List<InsuredPersonEntity> insuredPersons,
-                                                                 String externalId,
+                                                                 String externalPolicyId,
                                                                  LocalDate startDate) {
         return PolicyCreationResponseDto.builder()
-                .policyId(externalId)
+                .policyId(externalPolicyId)
                 .startDate(startDate)
                 .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(insuredPersons))
                 .totalPremium(PolicyPremiumHelper.calculateTotalPremium(insuredPersons))

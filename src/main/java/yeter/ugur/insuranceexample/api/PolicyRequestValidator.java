@@ -3,17 +3,17 @@ package yeter.ugur.insuranceexample.api;
 import org.springframework.stereotype.Component;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
+import yeter.ugur.insuranceexample.service.helper.TimeHelper;
 
-import java.time.Clock;
 import java.time.LocalDate;
 
 @Component
 public class PolicyRequestValidator {
 
-    private final Clock clock;
+    private final TimeHelper timeHelper;
 
-    public PolicyRequestValidator(Clock clock) {
-        this.clock = clock;
+    public PolicyRequestValidator(TimeHelper timeHelper) {
+        this.timeHelper = timeHelper;
     }
 
     public void verifyCreatePolicyOrThrow(PolicyCreationRequestDto policyCreationRequestDto) {
@@ -21,7 +21,7 @@ public class PolicyRequestValidator {
         if (startDate == null) {
             throw new PolicyDateException("Policy start date can not be null!");
         }
-        if (!startDate.isAfter(LocalDate.now(clock))) {
+        if (!startDate.isAfter(timeHelper.getLocalDateNow())) {
             throw new PolicyDateException("Policy start date can only be in future!");
         }
     }

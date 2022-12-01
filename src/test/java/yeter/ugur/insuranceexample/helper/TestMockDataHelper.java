@@ -1,11 +1,8 @@
 package yeter.ugur.insuranceexample.helper;
 
-import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
 
 public class TestMockDataHelper {
 
@@ -20,5 +17,8 @@ public class TestMockDataHelper {
     public static final LocalDate START_DATE = LocalDate.of(2022, 12, 12);
     public static final long NOW_IN_MILLI = Instant.now().toEpochMilli();
     public static final String EXTERNAL_POLICY_ID = "77002a2e-8294-4402-8d4e-86e2bbcf77ec";
+
+    public static final int POLICY_ID_1 = 1;
+
 
 }

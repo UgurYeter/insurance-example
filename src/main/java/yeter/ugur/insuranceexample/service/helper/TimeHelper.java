@@ -3,6 +3,7 @@ package yeter.ugur.insuranceexample.service.helper;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
+import java.time.LocalDate;
 
 @Component
 public class TimeHelper {
@@ -15,5 +16,9 @@ public class TimeHelper {
 
     public long getCurrentMilliSecond() {
         return clock.instant().toEpochMilli();
+    }
+
+    public LocalDate getLocalDateNow() {
+        return LocalDate.now(clock);
     }
 }

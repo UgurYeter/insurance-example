@@ -59,7 +59,6 @@ class PolicyCreationServiceTest {
                 insuredPersonEntities))
                 .thenReturn(policyEntity);
 
-
         policyCreationService.createPolicy(creationRequestDto);
 
         verify(policyObjectsMapper).mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, EXTERNAL_POLICY_ID);
