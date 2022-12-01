@@ -2,7 +2,9 @@ package yeter.ugur.insuranceexample.service;
 
 import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
+import yeter.ugur.insuranceexample.api.InsuredPersonDto;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
+import yeter.ugur.insuranceexample.api.modification.CollidingPolicyEffectiveDate;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
@@ -42,27 +44,43 @@ public class PolicyModificationService {
                 policyStateHelper.findLatestPolicyStatePriorToDate(policyModificationRequestDto.getPolicyId(),
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));
+        if (basePolicy.getStartDate().isEqual(policyModificationRequestDto.getEffectiveDate())) {
+            throw new CollidingPolicyEffectiveDate("There is already a policy state for the effective date!");
+        }
 
-        List<InsuredPersonEntity> insuredPersonEntities = insuredPersonMapper
-                .toInsuredPersonEntities(policyModificationRequestDto.getInsuredPersons());
-        Set<Integer> personIdsInTheRequest = collectPersonIds(insuredPersonEntities);
+        Set<Integer> personIdsInTheRequest = collectPersonIds(policyModificationRequestDto.getInsuredPersons());
         List<InsuredPersonEntity> existingPersons = basePolicy.getInsuredPersons()
                 .stream()
                 .filter(person -> personIdsInTheRequest.contains(person.getId()))
                 .collect(Collectors.toList());
 
-        List<InsuredPersonEntity> newInsurancePersonsToCreate = collectPersonsWithNullId(insuredPersonEntities);
-        PolicyEntity newPolicyState = buildPolicyEntity(policyModificationRequestDto.getEffectiveDate(), basePolicy.getExternalId());
-        newPolicyState = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(newPolicyState, newInsurancePersonsToCreate);
-        newPolicyState.addPersons(existingPersons);
-        if (basePolicy.getStartDate().isEqual(policyModificationRequestDto.getEffectiveDate())) {
-            policyStateHelper.deleteById(basePolicy.getId());
-        }
+        PolicyEntity policyWithNewlyCreatedPersons = createNewState(
+                policyModificationRequestDto,
+                existingPersons,
+                basePolicy.getExternalId());
+        return prepareResponse(policyWithNewlyCreatedPersons);
+    }
+
+    private PolicyEntity createNewState(PolicyModificationRequestDto policyModificationRequestDto,
+                                        List<InsuredPersonEntity> existingPersons,
+                                        String policyExternalId) {
+        List<InsuredPersonDto> newInsurancePersonsToCreate = collectPersonsWithNullId(policyModificationRequestDto.getInsuredPersons());
+        PolicyEntity newPolicyState = buildPolicyEntity(policyModificationRequestDto.getEffectiveDate(), policyExternalId);
+        PolicyEntity policyWithNewlyCreatedPersons = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(
+                newPolicyState,
+                insuredPersonMapper.toInsuredPersonEntities(newInsurancePersonsToCreate)
+        );
+        policyWithNewlyCreatedPersons.addPersons(existingPersons);
+        return policyWithNewlyCreatedPersons;
+    }
+
+    private PolicyModificationResponseDto prepareResponse(PolicyEntity policyWithNewlyCreatedPersons) {
+        List<InsuredPersonEntity> insuredPersons = policyWithNewlyCreatedPersons.getInsuredPersons();
         return PolicyModificationResponseDto.builder()
-                .policyId(newPolicyState.getExternalId())
-                .effectiveDate(newPolicyState.getStartDate())
-                .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(newPolicyState.getInsuredPersons()))
-                .totalPremium(PolicyPremiumHelper.calculateTotalPremium(newPolicyState.getInsuredPersons()))
+                .policyId(policyWithNewlyCreatedPersons.getExternalId())
+                .effectiveDate(policyWithNewlyCreatedPersons.getStartDate())
+                .insuredPersons(insuredPersonMapper.toInsuredPersonsDto(insuredPersons))
+                .totalPremium(PolicyPremiumHelper.calculateTotalPremium(insuredPersons))
                 .build();
     }
 
@@ -75,16 +93,16 @@ public class PolicyModificationService {
     }
 
     @VisibleForTesting
-    Set<Integer> collectPersonIds(List<InsuredPersonEntity> insuredPersons) {
+    Set<Integer> collectPersonIds(List<InsuredPersonDto> insuredPersons) {
         return insuredPersons
                 .stream()
-                .map(InsuredPersonEntity::getId)
+                .map(InsuredPersonDto::getId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
     @VisibleForTesting
-    List<InsuredPersonEntity> collectPersonsWithNullId(List<InsuredPersonEntity> insuredPersons) {
+    List<InsuredPersonDto> collectPersonsWithNullId(List<InsuredPersonDto> insuredPersons) {
         return insuredPersons
                 .stream()
                 .filter(person -> Objects.isNull(person.getId()))

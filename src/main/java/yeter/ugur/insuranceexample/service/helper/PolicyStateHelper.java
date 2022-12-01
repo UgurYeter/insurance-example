@@ -19,8 +19,8 @@ public class PolicyStateHelper {
         this.policyRepository = policyRepository;
     }
 
-    public Optional<PolicyEntity> findLatestPolicyStatePriorToDate(String policyId, LocalDate startDate) {
-        List<PolicyEntity> foundPolicies = policyRepository.findByExternalId(policyId);
+    public Optional<PolicyEntity> findLatestPolicyStatePriorToDate(String externalPolicyId, LocalDate startDate) {
+        List<PolicyEntity> foundPolicies = policyRepository.findByExternalId(externalPolicyId);
         if (foundPolicies.isEmpty()) {
             return Optional.empty();
         }
