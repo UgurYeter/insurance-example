@@ -34,7 +34,7 @@ public class PolicyEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     /**
      * Policy id known by outside.
@@ -56,7 +56,7 @@ public class PolicyEntity implements Serializable {
             CascadeType.PERSIST,
             CascadeType.MERGE
     }, fetch = FetchType.EAGER)
-    @JoinTable(name = "policy_person",
+    @JoinTable(name = "policy_insured_person",
             joinColumns = @JoinColumn(name = "policy_internal_id"),
             inverseJoinColumns = @JoinColumn(name = "person_id")
     )

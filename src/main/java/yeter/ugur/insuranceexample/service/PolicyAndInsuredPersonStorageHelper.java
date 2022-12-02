@@ -20,12 +20,10 @@ public class PolicyAndInsuredPersonStorageHelper {
     }
 
     public PolicyEntity createPolicyWithInsuredPersons(PolicyEntity policyEntity, List<InsuredPersonEntity> insuredPersons) {
-        PolicyEntity storedPolicy = policyRepository.save(policyEntity);
-        if (!CollectionUtils.isEmpty(insuredPersons)) {
+         if (!CollectionUtils.isEmpty(insuredPersons)) {
             List<InsuredPersonEntity> storedPersons = insuredPersonRepository.saveAll(insuredPersons);
-            storedPolicy.addPersons(storedPersons);
+             policyEntity.addPersons(storedPersons);
         }
-
-        return storedPolicy;
+         return policyRepository.save(policyEntity);
     }
 }

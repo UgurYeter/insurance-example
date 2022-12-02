@@ -39,7 +39,8 @@ public class PolicyStateHelper {
         return Optional.of(latestMatchingPolicy);
     }
 
-    public void deleteById(int id) {
-        policyRepository.deleteById(id);
-    }
+  public Optional<PolicyEntity> findPolicyStateByExternalIdAndStartDate(String externalPolicyId, LocalDate startDate){
+       return this.policyRepository.findByExternalIdAndStartDate(externalPolicyId, startDate);
+  }
+
 }

@@ -36,7 +36,7 @@ public class PolicyCreationService {
     @Transactional
     public PolicyCreationResponseDto createPolicy(PolicyCreationRequestDto creationRequestDto) {
         String externalPolicyId = externalPolicyIdProvider.generateExternalPolicyId();
-        PolicyEntity policyEntity = policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, externalPolicyId);
+        PolicyEntity policyEntity = policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(externalPolicyId, creationRequestDto.getStartDate());
         List<InsuredPersonEntity> insuredPersons = insuredPersonMapper.toInsuredPersonEntities(creationRequestDto.getInsuredPersons());
         PolicyEntity storedPolicy = policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(policyEntity, insuredPersons);
         return policyObjectsMapper.

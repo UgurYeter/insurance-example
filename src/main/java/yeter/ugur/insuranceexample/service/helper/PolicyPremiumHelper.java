@@ -1,18 +1,16 @@
 package yeter.ugur.insuranceexample.service.helper;
 
+import org.springframework.stereotype.Component;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public final class PolicyPremiumHelper {
+@Component
+public class PolicyPremiumHelper {
 
-    private PolicyPremiumHelper(){
-
-    }
-
-    public static BigDecimal calculateTotalPremium(List<InsuredPersonEntity> insuredPersons) {
-        if(insuredPersons == null){
+    public BigDecimal calculateTotalPremium(List<InsuredPersonEntity> insuredPersons) {
+        if (insuredPersons == null) {
             return BigDecimal.ZERO;
         }
         BigDecimal result = BigDecimal.ZERO;

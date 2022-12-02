@@ -17,18 +17,18 @@ CREATE TABLE policy (
 CREATE index idx_on_policy_for_external_id_and_start_date on policy (external_id, start_date);
 
 
- CREATE TABLE policy_person (
+ CREATE TABLE policy_insured_person (
         policy_internal_id integer not null,
         person_id integer not null
     );
 
-ALTER TABLE policy_person
+ALTER TABLE policy_insured_person
        add constraint foreign_key_policy_person_person_id
        foreign key (person_id)
        references insured_person;
 
 
-ALTER TABLE policy_person
-       add constraint foreign_key_policy_person_policy_internal_id
+ALTER TABLE policy_insured_person
+       add constraint foreign_key_policy_insured_person_policy_internal_id
        foreign key (policy_internal_id)
        references policy;

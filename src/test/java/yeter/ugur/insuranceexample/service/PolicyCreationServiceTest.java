@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
-import yeter.ugur.insuranceexample.helper.InsuredPersonEntityTestHelper;
+import yeter.ugur.insuranceexample.helper.InsuredPersonTestHelper;
 import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
 import yeter.ugur.insuranceexample.service.helper.ExternalPolicyIdProvider;
 import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.EXTERNAL_POLICY_ID;
 import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.NOW_IN_MILLI;
-import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE_1;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyCreationServiceTest {
@@ -46,12 +46,12 @@ class PolicyCreationServiceTest {
                 .prototypeRequestWithInsuredPersons();
         PolicyEntity policyEntity = PolicyEntity.builder()
                 .externalId(EXTERNAL_POLICY_ID)
-                .startDate(START_DATE)
+                .startDate(START_DATE_1)
                 .createdAt(NOW_IN_MILLI)
                 .build();
-        when(policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, EXTERNAL_POLICY_ID))
+        when(policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(EXTERNAL_POLICY_ID, creationRequestDto.getStartDate()))
                 .thenReturn(policyEntity);
-        List<InsuredPersonEntity> insuredPersonEntities = InsuredPersonEntityTestHelper.getInsuredPersonEntities();
+        List<InsuredPersonEntity> insuredPersonEntities = InsuredPersonTestHelper.prototypeInsuredPersonEntities();
         when(insuredPersonMapper.toInsuredPersonEntities(creationRequestDto.getInsuredPersons()))
                 .thenReturn(insuredPersonEntities);
         policyEntity.addPersons(insuredPersonEntities);
@@ -61,7 +61,7 @@ class PolicyCreationServiceTest {
 
         policyCreationService.createPolicy(creationRequestDto);
 
-        verify(policyObjectsMapper).mapToPolicyEntityWithoutInsuredPersons(creationRequestDto, EXTERNAL_POLICY_ID);
+        verify(policyObjectsMapper).mapToPolicyEntityWithoutInsuredPersons(EXTERNAL_POLICY_ID, creationRequestDto.getStartDate());
         verify(policyObjectsMapper).toPolicyCreationResponseDto(
                 policyEntity.getInsuredPersons(),
                 policyEntity.getExternalId(),

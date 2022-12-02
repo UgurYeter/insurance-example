@@ -17,7 +17,7 @@ public class InsuredPersonMapper {
                 .collect(Collectors.toList());
     }
 
-    private InsuredPersonEntity toInsuredPersonEntity(InsuredPersonDto person) {
+    public InsuredPersonEntity toInsuredPersonEntity(InsuredPersonDto person) {
         return InsuredPersonEntity.builder()
                 .id(person.getId())
                 .firstName(person.getFirstName())

@@ -16,11 +16,12 @@ class PolicyPremiumHelperTest {
 
     private static final BigDecimal PREMIUM_1 = BigDecimal.valueOf(12.10);
     private static final BigDecimal PREMIUM_2 = BigDecimal.valueOf(5.59);
+    private final PolicyPremiumHelper policyPremiumHelper = new PolicyPremiumHelper();
 
     @ParameterizedTest
     @MethodSource("supplyPremiums")
     void calculateTotalPremium(List<InsuredPersonEntity> insuredPersons, BigDecimal expected) {
-        BigDecimal totalPremium = PolicyPremiumHelper.calculateTotalPremium(insuredPersons);
+        BigDecimal totalPremium = policyPremiumHelper.calculateTotalPremium(insuredPersons);
 
         assertThat(totalPremium).isEqualTo(expected);
     }

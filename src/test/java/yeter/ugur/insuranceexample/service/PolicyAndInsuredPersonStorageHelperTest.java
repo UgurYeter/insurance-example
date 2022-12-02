@@ -9,7 +9,7 @@ import yeter.ugur.insuranceexample.dao.InsuredPersonEntity;
 import yeter.ugur.insuranceexample.dao.InsuredPersonRepository;
 import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.dao.PolicyRepository;
-import yeter.ugur.insuranceexample.helper.InsuredPersonEntityTestHelper;
+import yeter.ugur.insuranceexample.helper.InsuredPersonTestHelper;
 import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
 import yeter.ugur.insuranceexample.helper.TestMockDataHelper;
 
@@ -34,9 +34,9 @@ class PolicyAndInsuredPersonStorageHelperTest {
 
     @Test
     void itCreatesPolicyWithInsuredPersons() {
-        PolicyEntity policyWithoutPersons = PolicyTestDataHelper.prototypePolicyEntityWithoutId().build();
-        List<InsuredPersonEntity> insuredPersons = InsuredPersonEntityTestHelper.getInsuredPersonEntities();
-        PolicyEntity savedPolicy = PolicyTestDataHelper.prototypePolicyEntityWithoutId()
+        PolicyEntity policyWithoutPersons = PolicyTestDataHelper.prototypePolicyEntity().build();
+        List<InsuredPersonEntity> insuredPersons = InsuredPersonTestHelper.prototypeInsuredPersonEntities();
+        PolicyEntity savedPolicy = PolicyTestDataHelper.prototypePolicyEntity()
                 .id(TestMockDataHelper.POLICY_ID_1)
                 .insuredPersons(insuredPersons)
                 .build();
@@ -54,9 +54,9 @@ class PolicyAndInsuredPersonStorageHelperTest {
 
     @Test
     void itCreatesPolicyWithoutInsuredPersons() {
-        PolicyEntity policyEntity = PolicyTestDataHelper.prototypePolicyEntityWithoutId().build();
+        PolicyEntity policyEntity = PolicyTestDataHelper.prototypePolicyEntity().build();
         List<InsuredPersonEntity> insuredPersonEntities = List.of();
-        PolicyEntity savedPolicy = PolicyTestDataHelper.prototypePolicyEntityWithoutId()
+        PolicyEntity savedPolicy = PolicyTestDataHelper.prototypePolicyEntity()
                 .id(TestMockDataHelper.POLICY_ID_1)
                 .build();
         when(policyRepository.save(policyEntity)).thenReturn(savedPolicy);

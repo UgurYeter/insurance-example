@@ -8,12 +8,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
-import yeter.ugur.insuranceexample.helper.TestMockDataHelper;
 import yeter.ugur.insuranceexample.service.helper.TimeHelper;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE;
+import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE_1;
 
 @ExtendWith(MockitoExtension.class)
 class PolicyRequestValidatorTest {
@@ -35,18 +34,18 @@ class PolicyRequestValidatorTest {
 
     @Test
     void itThrowsExceptionWhenStartDateIsNotFutureDate() {
-        when(timeHelper.getLocalDateNow()).thenReturn(START_DATE);
+        when(timeHelper.getLocalDateNow()).thenReturn(START_DATE_1);
         PolicyCreationRequestDto policyCreationRequestDto = PolicyTestDataHelper.prototypeRequestWithoutInsuredPerson();
-        policyCreationRequestDto.setStartDate(START_DATE.minusDays(1));
+        policyCreationRequestDto.setStartDate(START_DATE_1.minusDays(1));
 
         assertThrows(PolicyDateException.class, () -> policyRequestValidator.verifyCreatePolicyOrThrow(policyCreationRequestDto));
     }
 
     @Test
     void itVerifiesSuccessfullyWhenChecksPass() {
-        when(timeHelper.getLocalDateNow()).thenReturn(START_DATE);
+        when(timeHelper.getLocalDateNow()).thenReturn(START_DATE_1);
         PolicyCreationRequestDto policyCreationRequestDto = PolicyTestDataHelper.prototypeRequestWithoutInsuredPerson();
-        policyCreationRequestDto.setStartDate(START_DATE.plusDays(1));
+        policyCreationRequestDto.setStartDate(START_DATE_1.plusDays(1));
 
         policyRequestValidator.verifyCreatePolicyOrThrow(policyCreationRequestDto);
     }

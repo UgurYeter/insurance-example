@@ -13,7 +13,7 @@
         ('Tim', 'Button', 10);
 
     INSERT INTO
-        policy_person
+        policy_insured_person
         (policy_internal_id, person_id)
     values
         (1, 1),

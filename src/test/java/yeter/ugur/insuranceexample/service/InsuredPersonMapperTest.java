@@ -20,7 +20,7 @@ import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.SECOND_NAME_
 
 class InsuredPersonMapperTest {
 
-    InsuredPersonMapper insuredPersonMapper = new InsuredPersonMapper();
+    private final InsuredPersonMapper insuredPersonMapper = new InsuredPersonMapper();
     @Test
     void itMapsToInsuredPersonEntity() {
         List<InsuredPersonDto> insuredPersonDtos = List.of(InsuredPersonDto.builder()
