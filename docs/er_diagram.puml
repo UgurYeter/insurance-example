@@ -1,0 +1,28 @@
+@startuml
+' hide the spot
+hide circle
+
+entity "insured_person" as ip {
+  *id : number <<generated>>
+  --
+  first_name : text
+  second_name : text
+  premium : numeric
+}
+
+entity "policy" as p {
+  *id : number <<generated>>
+  --
+  external_id : text
+  start_date  : date
+  created_at  : numeric
+}
+
+entity "policy_insured_person" as pip {
+  policy_internal_id : number <<FK>>
+  person_id : number <<FK>>
+}
+
+ip }|--|| pip
+p  }|--|| pip
+@enduml

@@ -19,22 +19,26 @@ public class PolicyRequestValidator {
 
     public void verifyCreatePolicyOrThrow(PolicyCreationRequestDto policyCreationRequestDto) {
         LocalDate startDate = policyCreationRequestDto.getStartDate();
+        verifyItIsNotNullOrThrow(startDate, "Policy start date can not be null!");
+        verifyFutureDateOrThrow(startDate, "Policy start date can only be in future!");
+    }
+
+    private static void verifyItIsNotNullOrThrow(LocalDate startDate, String message) {
         if (startDate == null) {
-            throw new PolicyDateException("Policy start date can not be null!");
+            throw new PolicyDateException(message);
         }
+    }
+
+    private void verifyFutureDateOrThrow(LocalDate startDate, String message) {
         if (!startDate.isAfter(timeHelper.getLocalDateNow())) {
-            throw new PolicyDateException("Policy start date can only be in future!");
+            throw new PolicyDateException(message);
         }
     }
 
     public void verifyModificationPolicyOrThrow(PolicyModificationRequestDto policyModificationRequestDto) {
         LocalDate effectiveDate = policyModificationRequestDto.getEffectiveDate();
-        if (effectiveDate == null) {
-            throw new PolicyDateException("Policy effectiveDate date can not be null!");
-        }
-        if (!effectiveDate.isAfter(LocalDate.now())) {
-            throw new PolicyDateException("Policy effectiveDate date can only be in future!");
-        }
+        verifyItIsNotNullOrThrow(effectiveDate, "Policy effectiveDate date can not be null!");
+        verifyFutureDateOrThrow(effectiveDate, "Policy effectiveDate date can only be in future!");
     }
 
 }
