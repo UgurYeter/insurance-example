@@ -35,13 +35,10 @@ public class InsuredPersonEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Nonnull
     private String firstName;
 
-    @Nonnull
     private String secondName;
 
-    @Nonnull
     private BigDecimal premium;
 
     @Setter

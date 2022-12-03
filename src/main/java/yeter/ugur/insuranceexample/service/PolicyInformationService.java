@@ -25,7 +25,7 @@ public class PolicyInformationService {
     }
 
     public PolicyInformationResponseDto getPolicyInformation(String policyId, LocalDate requestLocalDate) {
-        PolicyEntity foundPolicy = policyStateHelper.findLatestPolicyStatePriorToDate(policyId, requestLocalDate)
+        PolicyEntity foundPolicy = policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(policyId, requestLocalDate)
                 .orElseThrow(() -> new PolicyIsNotFoundException("Can't find the policy!"));
         PolicyInformationResponseDto policyInformationResponseDto = new PolicyInformationResponseDto();
         policyInformationResponseDto.setPolicyId(foundPolicy.getExternalId());

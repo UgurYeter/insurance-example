@@ -1,6 +1,5 @@
 package yeter.ugur.insuranceexample.service;
 
-import org.assertj.core.util.VisibleForTesting;
 import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.modification.CollidingPolicyEffectiveDate;
@@ -42,7 +41,7 @@ public class PolicyModificationService {
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate());
         PolicyEntity policyEffectiveToday =
-                policyStateHelper.findLatestPolicyStatePriorToDate(
+                policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(
                                 policyModificationRequestDto.getPolicyId(),
                                 policyModificationRequestDto.getEffectiveDate())
                         .orElseThrow(() -> new PolicyIsNotFoundException("Can't find policy to modify!"));

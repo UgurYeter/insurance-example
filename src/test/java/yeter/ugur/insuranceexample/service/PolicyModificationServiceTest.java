@@ -57,7 +57,7 @@ class PolicyModificationServiceTest {
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate()
         )).thenReturn(Optional.empty());
-        when(policyStateHelper.findLatestPolicyStatePriorToDate(
+        when(policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate()
         )).thenReturn(Optional.empty());
@@ -73,7 +73,7 @@ class PolicyModificationServiceTest {
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate()
         )).thenReturn(Optional.empty());
-        when(policyStateHelper.findLatestPolicyStatePriorToDate(policyModificationRequestDto.getPolicyId(),
+        when(policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate()))
                 .thenReturn(Optional.of(PolicyTestDataHelper.prototypePolicyEntity().build()));
         List<InsuredPersonEntity> insuredPersonEntities = InsuredPersonTestHelper.prototypeInsuredPersonEntities();

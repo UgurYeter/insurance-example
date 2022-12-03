@@ -19,6 +19,7 @@ public class TestMockDataHelper {
     public static final long NOW_IN_MILLI = Instant.now().toEpochMilli();
     public static final String EXTERNAL_POLICY_ID = "77002a2e-8294-4402-8d4e-86e2bbcf77ec";
     public static final int POLICY_ID_1 = 1;
+    public static final int POLICY_ID_2= 2;
 
 
 }

@@ -9,13 +9,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static yeter.ugur.insuranceexample.AppConfig.DATE_FORMAT;
+
 @Data
 @NoArgsConstructor
 public class PolicyModificationRequestDto {
 
     private String policyId;
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
+    @JsonFormat(pattern = DATE_FORMAT)
     private LocalDate effectiveDate;
 
     private List<InsuredPersonDto> insuredPersons = new ArrayList<>();

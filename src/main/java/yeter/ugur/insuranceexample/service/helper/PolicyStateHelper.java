@@ -19,28 +19,32 @@ public class PolicyStateHelper {
         this.policyRepository = policyRepository;
     }
 
-    public Optional<PolicyEntity> findLatestPolicyStatePriorToDate(String externalPolicyId, LocalDate startDate) {
+    public Optional<PolicyEntity> findLatestPolicyStatePriorOrEqualToDate(String externalPolicyId, LocalDate startDate) {
         List<PolicyEntity> foundPolicies = policyRepository.findByExternalId(externalPolicyId);
         if (foundPolicies.isEmpty()) {
             return Optional.empty();
         }
-        List<PolicyEntity> filteredPolicies = new ArrayList<>();
+        List<PolicyEntity> priorOrEqualDatedStates = getPriorOrEqualDatedStates(startDate, foundPolicies);
+        if (priorOrEqualDatedStates.isEmpty()) {
+            return Optional.empty();
+        }
+        priorOrEqualDatedStates.sort(Comparator.comparing(PolicyEntity::getStartDate));
+        return Optional.of(priorOrEqualDatedStates.get(priorOrEqualDatedStates.size() - 1));
+    }
+
+    private List<PolicyEntity> getPriorOrEqualDatedStates(LocalDate startDate, List<PolicyEntity> foundPolicies) {
+        List<PolicyEntity> priorOrEqualDatedStates = new ArrayList<>();
         for (PolicyEntity policyEntity : foundPolicies) {
             if (policyEntity.getStartDate().isBefore(startDate)
                     || policyEntity.getStartDate().isEqual(startDate)) {
-                filteredPolicies.add(policyEntity);
+                priorOrEqualDatedStates.add(policyEntity);
             }
         }
-        if (filteredPolicies.isEmpty()) {
-            return Optional.empty();
-        }
-        filteredPolicies.sort(Comparator.comparing(PolicyEntity::getStartDate));
-        PolicyEntity latestMatchingPolicy = filteredPolicies.get(filteredPolicies.size() - 1);
-        return Optional.of(latestMatchingPolicy);
+        return priorOrEqualDatedStates;
     }
 
-  public Optional<PolicyEntity> findPolicyStateByExternalIdAndStartDate(String externalPolicyId, LocalDate startDate){
-       return this.policyRepository.findByExternalIdAndStartDate(externalPolicyId, startDate);
-  }
+    public Optional<PolicyEntity> findPolicyStateByExternalIdAndStartDate(String externalPolicyId, LocalDate startDate) {
+        return this.policyRepository.findByExternalIdAndStartDate(externalPolicyId, startDate);
+    }
 
 }

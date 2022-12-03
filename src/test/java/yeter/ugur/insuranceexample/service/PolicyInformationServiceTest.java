@@ -38,7 +38,7 @@ class PolicyInformationServiceTest {
 
     @Test
     void itThrowsExceptionWhenThereIsNoPolicyState() {
-        when(policyStateHelper.findLatestPolicyStatePriorToDate(EXTERNAL_POLICY_ID, START_DATE_1))
+        when(policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(EXTERNAL_POLICY_ID, START_DATE_1))
                 .thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> policyInformationService
@@ -48,7 +48,7 @@ class PolicyInformationServiceTest {
     @Test
     void itReturnsPolicyInformation() {
         PolicyEntity policyEntity = PolicyTestDataHelper.prototypePolicyEntity().build();
-        when(policyStateHelper.findLatestPolicyStatePriorToDate(policyEntity.getExternalId(),
+        when(policyStateHelper.findLatestPolicyStatePriorOrEqualToDate(policyEntity.getExternalId(),
                 policyEntity.getStartDate()))
                 .thenReturn(Optional.of(policyEntity));
         when(policyPremiumHelper.calculateTotalPremium(policyEntity.getInsuredPersons())).thenReturn(TestMockDataHelper.PREMIUM_2);

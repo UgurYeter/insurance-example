@@ -6,9 +6,11 @@ import yeter.ugur.insuranceexample.api.PolicyResponseDto;
 
 import java.time.LocalDate;
 
+import static yeter.ugur.insuranceexample.AppConfig.DATE_FORMAT;
+
 @Data
 public class PolicyModificationResponseDto extends PolicyResponseDto {
 
-    @JsonFormat(pattern = "dd.MM.yyyy")
+    @JsonFormat(pattern = DATE_FORMAT)
     private LocalDate effectiveDate;
 }
