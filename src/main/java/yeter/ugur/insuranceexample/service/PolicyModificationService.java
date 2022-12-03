@@ -1,5 +1,6 @@
 package yeter.ugur.insuranceexample.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import yeter.ugur.insuranceexample.api.PolicyIsNotFoundException;
 import yeter.ugur.insuranceexample.api.modification.CollidingPolicyEffectiveDate;
@@ -17,19 +18,17 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
 public class PolicyModificationService {
-    private final PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
     private final PolicyStateHelper policyStateHelper;
     private final PolicyObjectsMapper policyObjectsMapper;
     private final InsuredPersonMapper insuredPersonMapper;
 
-    public PolicyModificationService(PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper,
-                                     PolicyStateHelper policyStateHelper,
-                                     PolicyObjectsMapper policyObjectsMapper,
-                                     InsuredPersonMapper insuredPersonMapper) {
-        this.policyAndInsuredPersonStorageHelper = policyAndInsuredPersonStorageHelper;
+    public PolicyModificationService(
+            PolicyStateHelper policyStateHelper,
+            PolicyObjectsMapper policyObjectsMapper,
+            InsuredPersonMapper insuredPersonMapper) {
         this.policyStateHelper = policyStateHelper;
         this.policyObjectsMapper = policyObjectsMapper;
         this.insuredPersonMapper = insuredPersonMapper;
@@ -58,7 +57,9 @@ public class PolicyModificationService {
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate(),
                 insuredPersonsOfNewPolicyState);
-        return policyObjectsMapper.toPolicyModificationResponseDto(newState);
+        PolicyModificationResponseDto policyModificationResponseDto = policyObjectsMapper.toPolicyModificationResponseDto(newState);
+        log.info("Policy with id:'{}' and external_id:'{}' successfully modified!", newState.getId(), newState.getExternalId());
+        return policyModificationResponseDto;
     }
 
     private static Set<Integer> collectEffectivePolicyPersonIds(PolicyEntity policyEffectiveToday) {
@@ -70,7 +71,7 @@ public class PolicyModificationService {
 
 
     private boolean personIdNullOrInTheSet(Set<Integer> effectivePolicyPersonIds,
-                                   InsuredPersonEntity insuredPersonEntity) {
+                                           InsuredPersonEntity insuredPersonEntity) {
         return Objects.isNull(insuredPersonEntity.getId())
                 || effectivePolicyPersonIds.contains(insuredPersonEntity.getId());
     }
@@ -87,7 +88,7 @@ public class PolicyModificationService {
                                         LocalDate effectiveDate,
                                         List<InsuredPersonEntity> insuredPersonEntities) {
         PolicyEntity newPolicyState = policyObjectsMapper.mapToPolicyEntityWithoutInsuredPersons(policyExternalId, effectiveDate);
-        return policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(
+        return policyStateHelper.createNewPolicyState(
                 newPolicyState,
                 insuredPersonEntities
         );

@@ -11,6 +11,7 @@ import yeter.ugur.insuranceexample.dao.PolicyEntity;
 import yeter.ugur.insuranceexample.helper.InsuredPersonTestHelper;
 import yeter.ugur.insuranceexample.helper.PolicyTestDataHelper;
 import yeter.ugur.insuranceexample.service.helper.ExternalPolicyIdProvider;
+import yeter.ugur.insuranceexample.service.helper.PolicyStateHelper;
 import yeter.ugur.insuranceexample.service.mapper.InsuredPersonMapper;
 import yeter.ugur.insuranceexample.service.mapper.PolicyObjectsMapper;
 
@@ -26,11 +27,9 @@ import static yeter.ugur.insuranceexample.helper.TestMockDataHelper.START_DATE_1
 class PolicyCreationServiceTest {
 
     @Mock
-    private PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
-
+    private PolicyStateHelper policyStateHelper;
     @Mock
     private PolicyObjectsMapper policyObjectsMapper;
-
     @Mock
     private InsuredPersonMapper insuredPersonMapper;
     @Mock
@@ -40,7 +39,7 @@ class PolicyCreationServiceTest {
     private PolicyCreationService policyCreationService;
 
     @Test
-    void createPolicy() {
+    void itCreatesPolicyWithPersons() {
         when(externalPolicyIdProvider.generateExternalPolicyId()).thenReturn(EXTERNAL_POLICY_ID);
         PolicyCreationRequestDto creationRequestDto = PolicyTestDataHelper
                 .prototypeRequestWithInsuredPersons();
@@ -55,7 +54,7 @@ class PolicyCreationServiceTest {
         when(insuredPersonMapper.toInsuredPersonEntities(creationRequestDto.getInsuredPersons()))
                 .thenReturn(insuredPersonEntities);
         policyEntity.addPersons(insuredPersonEntities);
-        when(policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(policyEntity,
+        when(policyStateHelper.createNewPolicyState(policyEntity,
                 insuredPersonEntities))
                 .thenReturn(policyEntity);
 

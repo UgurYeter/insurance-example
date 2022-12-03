@@ -27,8 +27,6 @@ import static org.mockito.Mockito.when;
 class PolicyModificationServiceTest {
 
     @Mock
-    private PolicyAndInsuredPersonStorageHelper policyAndInsuredPersonStorageHelper;
-    @Mock
     private PolicyStateHelper policyStateHelper;
     @Mock
     private PolicyObjectsMapper policyObjectsMapper;
@@ -85,7 +83,7 @@ class PolicyModificationServiceTest {
                 policyModificationRequestDto.getPolicyId(),
                 policyModificationRequestDto.getEffectiveDate()))
                 .thenReturn(newPolicyState);
-        when(policyAndInsuredPersonStorageHelper.createPolicyWithInsuredPersons(
+        when(policyStateHelper.createNewPolicyState(
                 newPolicyState,
                 insuredPersonEntities
 

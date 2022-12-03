@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import yeter.ugur.insuranceexample.AppConfig;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationRequestDto;
 import yeter.ugur.insuranceexample.api.creation.PolicyCreationResponseDto;
-import yeter.ugur.insuranceexample.api.creation.PolicyDateException;
 import yeter.ugur.insuranceexample.api.information.PolicyInformationResponseDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationRequestDto;
 import yeter.ugur.insuranceexample.api.modification.PolicyModificationResponseDto;
@@ -22,6 +21,7 @@ import yeter.ugur.insuranceexample.service.PolicyModificationService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
 
 @RestController
 @RequestMapping("/policies")
@@ -44,31 +44,29 @@ public class PolicyController {
 
     @PostMapping("/create")
     public PolicyCreationResponseDto createPolicy(@RequestBody PolicyCreationRequestDto policyCreationRequestDto) {
+        log.info("Policy creation request is received!Policy start_date:'{}'", policyCreationRequestDto.getStartDate());
         policyRequestValidator.verifyCreatePolicyOrThrow(policyCreationRequestDto);
         return policyCreationService.createPolicy(policyCreationRequestDto);
     }
 
     @PutMapping("/modify")
     public PolicyModificationResponseDto modifyPolicy(@RequestBody PolicyModificationRequestDto policyModificationRequestDto) {
-        LocalDate effectiveDate = policyModificationRequestDto.getEffectiveDate();
-        if(effectiveDate == null){
-            throw new PolicyDateException("Policy effectiveDate date can not be null!");
-        }
-        if (!effectiveDate.isAfter(LocalDate.now())) {
-            throw new PolicyDateException("Policy effectiveDate date can only be in future!");
-        }
+        log.info("Policy modification request is received!Policy with external_id:{} and effectiveDate:'{}'",
+                policyModificationRequestDto.getPolicyId(),
+                policyModificationRequestDto.getEffectiveDate());
+        policyRequestValidator.verifyModificationPolicyOrThrow(policyModificationRequestDto);
         return policyModificationService.modifyPolicy(policyModificationRequestDto);
     }
 
     @GetMapping("/{policyId}")
-    public PolicyInformationResponseDto requestPolicy(@PathVariable("policyId") String policyId,
-                                                      @RequestParam(required = false)
-                                                      String requestDate) {
+    public PolicyInformationResponseDto requestPolicyInformation(
+            @PathVariable("policyId") String policyId,
+            @RequestParam(required = false) String requestDate) {
         LocalDate requestLocalDate = LocalDate.now();
+        log.info("Policy information request received with external_id:'{}' and request_date:'{}'!", policyId, requestDate);
         if (requestDate != null) {
             requestLocalDate = LocalDate.parse(requestDate, DateTimeFormatter.ofPattern(AppConfig.DATE_FORMAT));
         }
-        log.debug("policyId:{} and requestDate:{}", policyId, requestDate);
         return policyInformationService.getPolicyInformation(policyId, requestLocalDate);
     }
 }
